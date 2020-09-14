@@ -3,11 +3,11 @@ import { Application } from "express";
 
 class Express {
   public app: Application;
-  public port: number;
+  public port: string | number;
 
   constructor(appInit: {
-    port: number;
-    // databases: any;
+    port: string | number;
+    databases: any;
     middleWares: any;
     controllers: any;
   }) {
@@ -15,6 +15,7 @@ class Express {
     this.port = appInit.port;
 
     this.middlewares(appInit.middleWares);
+    this.connectDatabase(appInit.databases);
     this.routes(appInit.controllers);
   }
 
@@ -33,6 +34,13 @@ class Express {
 
     middleWares.forEach((middleWare) => {
       this.app.use(middleWare);
+    });
+  }
+  private connectDatabase(databases: {
+    forEach: (arg0: (databases: any) => void) => void;
+  }): void {
+    databases.forEach((database) => {
+      database.connect();
     });
   }
   public listen(): void {
