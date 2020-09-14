@@ -1,6 +1,6 @@
 import * as express from "express";
 import Controller from "../../interfaces/controller.interface"
-import Auth from "./auth.interface"
+import { Login } from "./auth.interface"
 import authModel from "./auth.model"
 
 class AuthController implements Controller {
@@ -14,15 +14,15 @@ class AuthController implements Controller {
   }
 
   private initializeRoutes() {
-    // this.router.post(`${this.path}/login`, this.postLogin)
-    this.router.get(`${this.path}/login`, this.postLogin) //test 
+    this.router.post(`${this.path}/login`, this.postLogin)
   }
 
   private postLogin = (
     req: express.Request,
     res: express.Response
   ) => {
-    res.json({message: "Lam duoc roi"})
+    const {username, password}: Login = req.body;
+    res.json({username, password})
   }
 }
 export default AuthController;

@@ -1,8 +1,7 @@
-// import * as express from "express";
 import express = require("express");
+
 import { Application } from "express";
 import logger from "../ultis/logger";
-
 class Express {
   public app: Application;
   public port: number;
@@ -10,12 +9,13 @@ class Express {
   constructor(appInit: {
     port: number;
     // databases: any;
-    // middleWares: any;
+    middleWares: any;
     controllers: any;
   }){
     this.app = express();
     this.port = appInit.port;
 
+    this.middlewares(appInit.middleWares);
     this.routes(appInit.controllers);
   }
 
@@ -26,7 +26,16 @@ class Express {
       this.app.use('/', controller.router);
     });
   }
+  private middlewares(middleWares: {
+    forEach: (arg0: (middleWare: any) => void) => void;
+  }): void {
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: false  }));
 
+    middleWares.forEach(middleWare => {
+      this.app.use(middleWare);
+    });
+  }
   public listen(): void {
     this.app.listen(this.port, () => {
       logger({ type: 'Info', message: `server is listening on ${this.port}` });
