@@ -1,7 +1,7 @@
 import * as express from "express";
-import Controller from "../../interfaces/controller.interface"
-import { Login } from "./auth.interface"
-import authModel from "./auth.model"
+import Controller from "../../interfaces/controller.interface";
+import { Login } from "./auth.interface";
+import authModel from "./auth.model";
 
 class AuthController implements Controller {
   public path = "/auth";
@@ -14,15 +14,12 @@ class AuthController implements Controller {
   }
 
   private initializeRoutes() {
-    this.router.post(`${this.path}/login`, this.postLogin)
+    this.router.post(`${this.path}/login`, this.Login);
   }
 
-  private postLogin = (
-    req: express.Request,
-    res: express.Response
-  ) => {
-    const {username, password}: Login = req.body;
-    res.json({username, password})
-  }
+  private Login = (req: express.Request, res: express.Response) => {
+    const { username, password }: Login = req.body;
+    res.json({ username, password });
+  };
 }
 export default AuthController;

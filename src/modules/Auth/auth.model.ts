@@ -1,5 +1,5 @@
 import * as mongoose from "mongoose";
-import {User} from "./auth.interface";
+import { User } from "./auth.interface";
 
 const userSchema = new mongoose.Schema({
   username: String,

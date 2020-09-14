@@ -11,8 +11,4 @@ interface User {
   username: string;
   password: string;
 }
-export {
-  Login,
-  Register,
-  User
-};
+export { Login, Register, User };
