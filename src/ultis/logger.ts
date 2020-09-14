@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 
-type TypeLog = 'Info' | 'Notify' | 'Error';
+type TypeLog = 'Info' | 'Notify' | 'Error' | 'Success';
 
 interface LogParams {
   type: TypeLog;
@@ -9,6 +9,8 @@ interface LogParams {
 
 export default ({ type, message }: LogParams) => {
   switch (type) {
+    case 'Success':
+      return console.log(chalk.green(message));
     case 'Info':
       return console.log(chalk.blue(message));
     case 'Notify':
