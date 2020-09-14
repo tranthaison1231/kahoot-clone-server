@@ -1,7 +1,7 @@
 // import * as express from "express";
-import express = require("express");
-import { Application } from "express";
-import logger from "../ultis/logger";
+import express from 'express';
+import { Application } from 'express';
+import logger from '@/ultis/logger';
 
 class Express {
   public app: Application;
@@ -12,7 +12,7 @@ class Express {
     // databases: any;
     // middleWares: any;
     controllers: any;
-  }){
+  }) {
     this.app = express();
     this.port = appInit.port;
 
@@ -22,14 +22,17 @@ class Express {
   private routes(controllers: {
     forEach: (arg0: (controller: any) => void) => void;
   }): void {
-    controllers.forEach(controller => {
+    controllers.forEach((controller) => {
       this.app.use('/', controller.router);
     });
   }
 
   public listen(): void {
     this.app.listen(this.port, () => {
-      logger({ type: 'Info', message: `server is listening on ${this.port}` });
+      logger({
+        type: 'Info',
+        message: `Server is listening on http://localhost:${this.port}`,
+      });
     });
   }
 }
