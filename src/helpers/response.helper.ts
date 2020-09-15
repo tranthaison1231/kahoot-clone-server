@@ -1,12 +1,12 @@
 import * as express from "express";
-class Response {
-  static success = (res: express.Response, data: any, status = 200) => {
+const Response = {
+  success: (res: express.Response, data: any, status = 200) => {
     return res.status(status).json({
       success: true,
       ...data
     });
-  };
-  static error = (res: express.Response, err: any, status = 400) => {
+  },
+  error: (res: express.Response, err: any, status = 400) => {
     return res.status(status).json({
       success: false,
       error: {
@@ -15,6 +15,6 @@ class Response {
         errors: err.errors
       }
     });
-  };
-}
+  }
+};
 export default Response;

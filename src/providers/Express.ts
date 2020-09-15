@@ -1,15 +1,20 @@
 import express from "express";
 import { Application } from "express";
+import logger from "@/ultis/logger";
+
+interface appConstructor {
+  forEach: (arg0: (controller: any) => void) => void;
+}
 
 class Express {
   public app: Application;
-  public port: string | number;
+  public port: number;
 
   constructor(appInit: {
-    port: string | number;
-    databases: any;
-    middleWares: any;
-    controllers: any;
+    port: number;
+    databases: appConstructor;
+    middleWares: appConstructor;
+    controllers: appConstructor;
   }) {
     this.app = express();
     this.port = appInit.port;
@@ -19,16 +24,12 @@ class Express {
     this.routes(appInit.controllers);
   }
 
-  private routes(controllers: {
-    forEach: (arg0: (controller: any) => void) => void;
-  }): void {
+  private routes(controllers: appConstructor): void {
     controllers.forEach((controller) => {
       this.app.use("/", controller.router);
     });
   }
-  private middlewares(middleWares: {
-    forEach: (arg0: (middleWare: any) => void) => void;
-  }): void {
+  private middlewares(middleWares: appConstructor): void {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
 
@@ -36,16 +37,17 @@ class Express {
       this.app.use(middleWare);
     });
   }
-  private connectDatabase(databases: {
-    forEach: (arg0: (databases: any) => void) => void;
-  }): void {
+  private connectDatabase(databases: appConstructor): void {
     databases.forEach((database) => {
       database.connect();
     });
   }
   public listen(): void {
     this.app.listen(this.port, () => {
-      console.log(`Server is listening on port ${this.port}`);
+      logger({
+        type: "Success",
+        message: `Server is listening on http://localhost:${this.port}`
+      });
     });
   }
 }

@@ -6,12 +6,13 @@
     "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,
+    "noEmit": false,
     "outDir": "dist",
-    "baseUrl": "."
-    // "paths": {
-    //   "providers/*": ["providers/*"]
-    // }
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["typings/*", "node_modules"]
 }

@@ -1,9 +1,9 @@
 import * as express from "express";
 import * as bcrypt from "bcrypt";
-import Controller from "../../interfaces/controller.interface";
+import Controller from "@/interfaces/controller.interface";
 import { Login, Register } from "./auth.interface";
 import authModel from "./auth.model";
-import Response from "../../helpers/response.helper";
+import Response from "@/helpers/response.helper";
 
 class AuthController implements Controller {
   public path = "/auth";
@@ -26,7 +26,6 @@ class AuthController implements Controller {
     if (!user) {
       return Response.error(res, { message: "User name does not exist" }, 403);
     }
-    console.log(password, typeof password, user.password, typeof user.password);
     const isPasswordCorrect = await bcrypt.compare(
       password + "",
       user.password

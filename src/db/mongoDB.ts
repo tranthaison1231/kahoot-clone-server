@@ -1,15 +1,23 @@
 import mongoose from "mongoose";
-export default class MongoDB {
-  static async connect() {
+import logger from "@/ultis/logger";
+const MongoDB = {
+  connect: async () => {
     try {
       const conn = await mongoose.connect(process.env.MONGO_URL, {
         useNewUrlParser: true,
         useUnifiedTopology: true
       });
-      console.log(`MongoDB connected: ${conn.connection.host}`);
+      logger({
+        type: "Success",
+        message: `MongoDB connected: ${conn.connection.host}`
+      });
     } catch (err) {
-      console.log(`Fail to connect to mongo ${err}`);
+      logger({
+        type: "Error",
+        message: `Fail to connect to mongo ${err}`
+      });
       process.exit();
     }
   }
-}
+};
+export default MongoDB;
