@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import logger from "@/ultis/logger";
+
 const MongoDB = {
   connect: async () => {
     try {

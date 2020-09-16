@@ -9,7 +9,7 @@ class AuthController implements Controller {
   public path = "/auth";
   public router = express.Router();
   private auth = authModel;
-  private saltRounds: number = 10;
+  private salt: number = 10;
 
   constructor() {
     this.initializeRoutes();
@@ -47,7 +47,7 @@ class AuthController implements Controller {
     if (password !== confirmPassword) {
       return Response.error(res, { message: "Password not matched" }, 403);
     }
-    const hashPassword = await bcrypt.hash(password, this.saltRounds);
+    const hashPassword = await bcrypt.hash(password, this.salt);
     const newUser = new this.auth({
       username,
       password: hashPassword
