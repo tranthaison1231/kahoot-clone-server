@@ -15,10 +15,10 @@ class AuthController implements Controller {
     this.initializeRoutes();
   }
 
-  private initializeRoutes() {
+  public initializeRoutes = () => {
     this.router.post(`${this.path}/login`, this.Login);
     this.router.post(`${this.path}/register`, this.Register);
-  }
+  };
 
   private Login = async (req: express.Request, res: express.Response) => {
     const { username, password }: Login = req.body;
