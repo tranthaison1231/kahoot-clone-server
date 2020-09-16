@@ -1,4 +1,5 @@
 import * as express from "express";
+
 const Response = {
   success: (res: express.Response, data: any, status = 200) => {
     return res.status(status).json({

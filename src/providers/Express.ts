@@ -2,7 +2,7 @@ import express from "express";
 import { Application } from "express";
 import logger from "@/ultis/logger";
 
-interface appConstructor {
+interface AppConstructor {
   forEach: (arg0: (controller: any) => void) => void;
 }
 
@@ -12,9 +12,9 @@ class Express {
 
   constructor(appInit: {
     port: number;
-    databases: appConstructor;
-    middleWares: appConstructor;
-    controllers: appConstructor;
+    databases: AppConstructor;
+    middleWares: AppConstructor;
+    controllers: AppConstructor;
   }) {
     this.app = express();
     this.port = appInit.port;
@@ -24,12 +24,12 @@ class Express {
     this.routes(appInit.controllers);
   }
 
-  private routes(controllers: appConstructor): void {
+  private routes(controllers: AppConstructor): void {
     controllers.forEach((controller) => {
       this.app.use("/", controller.router);
     });
   }
-  private middlewares(middleWares: appConstructor): void {
+  private middlewares(middleWares: AppConstructor): void {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
 
@@ -37,7 +37,7 @@ class Express {
       this.app.use(middleWare);
     });
   }
-  private connectDatabase(databases: appConstructor): void {
+  private connectDatabase(databases: AppConstructor): void {
     databases.forEach((database) => {
       database.connect();
     });
