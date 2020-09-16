@@ -6,7 +6,7 @@ import { Login, Register } from "./auth.interface";
 import authModel from "./auth.model";
 import Response from "@/helpers/response.helper";
 import { ONE_HOUR } from "@/constant";
-import requireAuth from "@/middlewares/auth.middleware";
+
 class AuthController implements Controller {
   public path = "/auth";
   public router = express.Router();
@@ -19,7 +19,7 @@ class AuthController implements Controller {
 
   private initializeRoutes() {
     this.router.post(`${this.path}/login`, this.Login);
-    this.router.post(`${this.path}/register`, requireAuth, this.Register);
+    this.router.post(`${this.path}/register`, this.Register);
   }
 
   private Login = async (req: express.Request, res: express.Response) => {
