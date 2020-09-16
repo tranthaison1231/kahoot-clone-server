@@ -5,9 +5,9 @@
   "main": "server.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon --exec ts-node ./src/server.ts",
-    "start": "nodemon ./dist/server.js",
-    "prod": "npm run build && npm run start",
+    "dev": "tsc & nodemon --exec ts-node ./src/server.ts",
+    "start": "node ./dist/server.js",
+    "start:prod": "NODE_ENV=production node ./dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -24,7 +24,8 @@
     "module-alias": "^2.2.2",
     "mongoose": "^5.10.5",
     "morgan": "^1.10.0",
-    "ts-node": "^9.0.0"
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.2"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^3.1.1",
@@ -33,8 +34,7 @@
     "@types/express": "^4.17.8",
     "@types/mongoose": "^5.7.36",
     "@types/morgan": "^1.9.1",
-    "nodemon": "^2.0.4",
-    "typescript": "^4.0.2"
+    "nodemon": "^2.0.4"
   },
   "_moduleAliases": {
     "@": "dist"
