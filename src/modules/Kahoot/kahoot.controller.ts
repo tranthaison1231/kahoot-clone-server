@@ -4,6 +4,7 @@ import Kahoot from "./kahoot.interface";
 import kahootModel from "./kahoot.model";
 import Response from "@/helpers/response.helper";
 import mongoose from "mongoose";
+import status from "http-status";
 
 class KahootController implements Controller {
   public path = "/kahoots";
@@ -30,24 +31,26 @@ class KahootController implements Controller {
       type
     });
     await newKahoot.save();
-    return Response.success(
+    return Response(
       res,
       { message: "Create completed", kahoot: newKahoot },
-      201
+      status.CREATED
     );
   };
-
   private getKahoots = async (req: express.Request, res: express.Response) => {
     const kahoots = await this.kahoot.find();
-    Response.success(res, { kahoots }, 201);
+    if (!kahoots.length) {
+      return Response(res, { message: "Kahoots not found" }, status.NOT_FOUND);
+    }
+    Response(res, { kahoots });
   };
   private getKahoot = async (req: express.Request, res: express.Response) => {
     const { id } = req.params;
     const kahoot = await this.kahoot.findById(id);
     if (!kahoot) {
-      return Response.error(res, { message: "Kahoot not found" }, 404);
+      return Response(res, { message: "Kahoot not found" }, status.NOT_FOUND);
     }
-    Response.success(res, { kahoot }, 201);
+    Response(res, { kahoot });
   };
   private deleteKahoot = async (
     req: express.Request,
@@ -56,9 +59,9 @@ class KahootController implements Controller {
     const { id } = req.params;
     const kahoot = await this.kahoot.findByIdAndDelete(id);
     if (!kahoot) {
-      return Response.error(res, { message: "Kahoot not found" }, 404);
+      return Response(res, { message: "Kahoot not found" }, status.NOT_FOUND);
     }
-    Response.success(res, { message: "Delete completed", kahoot }, 201);
+    Response(res, { message: "Delete completed", kahoot }, status.CREATED);
   };
   private putKahoot = async (req: express.Request, res: express.Response) => {
     const { id } = req.params;
@@ -71,12 +74,12 @@ class KahootController implements Controller {
       { new: true }
     );
     if (!newKahoot) {
-      return Response.error(res, { message: "Kahoot not found" }, 404);
+      return Response(res, { message: "Kahoot not found" }, status.NOT_FOUND);
     }
-    return Response.success(
+    return Response(
       res,
       { message: "Edit completed", kahoot: newKahoot },
-      201
+      status.CREATED
     );
   };
 }
