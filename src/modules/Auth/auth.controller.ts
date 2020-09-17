@@ -19,11 +19,11 @@ class AuthController implements Controller {
   }
 
   public initializeRoutes = () => {
-    this.router.post(`${this.path}/login`, this.Login);
-    this.router.post(`${this.path}/register`, this.Register);
+    this.router.post(`${this.path}/login`, this.login);
+    this.router.post(`${this.path}/register`, this.register);
   };
 
-  private Login = async (req: express.Request, res: express.Response) => {
+  private login = async (req: express.Request, res: express.Response) => {
     const { username, password }: Login = req.body;
     const user = await this.auth.findOne({ username });
     if (!user) {
@@ -53,7 +53,7 @@ class AuthController implements Controller {
     );
   };
 
-  private Register = async (req: express.Request, res: express.Response) => {
+  private register = async (req: express.Request, res: express.Response) => {
     const { username, password, confirmPassword }: Register = req.body;
 
     const user = await this.auth.findOne({ username });

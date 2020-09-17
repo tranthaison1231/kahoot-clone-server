@@ -5,6 +5,7 @@ import kahootModel from "./kahoot.model";
 import Response from "@/helpers/response.helper";
 import mongoose from "mongoose";
 import status from "http-status";
+import requireAuth from "@/middlewares/auth.middleware";
 
 class KahootController implements Controller {
   public path = "/kahoots";
@@ -16,14 +17,14 @@ class KahootController implements Controller {
   }
 
   public initializeRoutes = () => {
-    this.router.get(this.path, this.getKahoots);
-    this.router.post(this.path, this.postKahoot);
-    this.router.get(`${this.path}/:id`, this.getKahoot);
-    this.router.delete(`${this.path}/:id`, this.deleteKahoot);
-    this.router.put(`${this.path}/:id`, this.putKahoot);
+    this.router.get(this.path, this.getAll);
+    this.router.get(`${this.path}/:id`, this.getById);
+    this.router.post(this.path, requireAuth, this.post);
+    this.router.put(`${this.path}/:id`, requireAuth, this.update);
+    this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
   };
 
-  private postKahoot = async (req: express.Request, res: express.Response) => {
+  private post = async (req: express.Request, res: express.Response) => {
     const { userId, title, type }: Kahoot = req.body;
     const newKahoot = new this.kahoot({
       userId: mongoose.Types.ObjectId(userId),
@@ -37,14 +38,14 @@ class KahootController implements Controller {
       status.CREATED
     );
   };
-  private getKahoots = async (req: express.Request, res: express.Response) => {
+  private getAll = async (req: express.Request, res: express.Response) => {
     const kahoots = await this.kahoot.find();
     if (!kahoots.length) {
       return Response(res, { message: "Kahoots not found" }, status.NOT_FOUND);
     }
     Response(res, { kahoots });
   };
-  private getKahoot = async (req: express.Request, res: express.Response) => {
+  private getById = async (req: express.Request, res: express.Response) => {
     const { id } = req.params;
     const kahoot = await this.kahoot.findById(id);
     if (!kahoot) {
@@ -52,10 +53,7 @@ class KahootController implements Controller {
     }
     Response(res, { kahoot });
   };
-  private deleteKahoot = async (
-    req: express.Request,
-    res: express.Response
-  ) => {
+  private deleteById = async (req: express.Request, res: express.Response) => {
     const { id } = req.params;
     const kahoot = await this.kahoot.findByIdAndDelete(id);
     if (!kahoot) {
@@ -63,7 +61,7 @@ class KahootController implements Controller {
     }
     Response(res, { message: "Delete completed", kahoot }, status.CREATED);
   };
-  private putKahoot = async (req: express.Request, res: express.Response) => {
+  private update = async (req: express.Request, res: express.Response) => {
     const { id } = req.params;
     const { userId, title, type }: Kahoot = req.body;
     const newKahoot = await this.kahoot.findOneAndUpdate(
