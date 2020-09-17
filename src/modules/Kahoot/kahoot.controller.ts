@@ -17,10 +17,10 @@ class KahootController implements Controller {
   }
 
   public initializeRoutes = () => {
-    this.router.get(this.path, this.getAll);
-    this.router.get(`${this.path}/:id`, this.getById);
     this.router.post(this.path, requireAuth, this.post);
+    this.router.get(this.path, requireAuth, this.getAll);
     this.router.put(`${this.path}/:id`, requireAuth, this.update);
+    this.router.get(`${this.path}/:id`, requireAuth, this.getById);
     this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
   };
 
