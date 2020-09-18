@@ -8,7 +8,6 @@ class AuthController implements Controller {
   public path = '/auth';
   public router = express.Router();
   private auth = authModel;
-  private salt = 10;
   constructor() {
     this.initializeRoutes();
   }
@@ -22,10 +21,7 @@ class AuthController implements Controller {
     if (!user) {
       return Response.error(res, { message: 'User name does not exist' }, 403);
     }
-    const isPasswordCorrect = await bcrypt.compare(
-      password + '',
-      user.password
-    );
+    const isPasswordCorrect = await this.auth.correctPassword( password + '', user.password)
     if (!isPasswordCorrect) {
       return Response.error(res, { message: 'Wrong password' }, 403);
     }
@@ -44,10 +40,9 @@ class AuthController implements Controller {
     if (password !== confirmPassword) {
       return Response.error(res, { message: 'Password not matched' }, 403);
     }
-    const hashPassword = await bcrypt.hash(password, this.salt);
+   
     const newUser = new this.auth({
-      username,
-      password: hashPassword
+      username
     });
     await newUser.save();
     return Response.success(res, { user: newUser }, 201);
