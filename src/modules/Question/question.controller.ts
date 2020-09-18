@@ -38,7 +38,7 @@ class QuestionController implements Controller {
     );
   };
   private getAll = async (req: express.Request, res: express.Response) => {
-    const questions = await this.question.find();
+    const questions = await this.question.find().lean();
     if (!questions.length) {
       return Response(
         res,
@@ -50,7 +50,7 @@ class QuestionController implements Controller {
   };
   private getById = async (req: express.Request, res: express.Response) => {
     const { id } = req.params;
-    const question = await this.question.findById(id);
+    const question = await this.question.findById(id).lean();
     if (!question) {
       return Response(res, { message: 'Question not found' }, status.NOT_FOUND);
     }
@@ -58,7 +58,7 @@ class QuestionController implements Controller {
   };
   private deleteById = async (req: express.Request, res: express.Response) => {
     const { id } = req.params;
-    const question = await this.question.findByIdAndDelete(id);
+    const question = await this.question.findByIdAndDelete(id).lean();
     if (!question) {
       return Response(res, { message: 'Question not found' }, status.NOT_FOUND);
     }
@@ -67,13 +67,15 @@ class QuestionController implements Controller {
   private update = async (req: express.Request, res: express.Response) => {
     const { id } = req.params;
     const question: Question = req.body;
-    const newQuestion = await this.question.findOneAndUpdate(
-      { _id: id },
-      {
-        $set: { ...question }
-      },
-      { new: true }
-    );
+    const newQuestion = await this.question
+      .findOneAndUpdate(
+        { _id: id },
+        {
+          $set: { ...question }
+        },
+        { new: true }
+      )
+      .lean();
     if (!newQuestion) {
       return Response(res, { message: 'Question not found' }, status.NOT_FOUND);
     }

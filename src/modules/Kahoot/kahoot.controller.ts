@@ -38,7 +38,7 @@ class KahootController implements Controller {
     );
   };
   private getAll = async (req: express.Request, res: express.Response) => {
-    const kahoots = await this.kahoot.find();
+    const kahoots = await this.kahoot.find().lean();
     if (!kahoots.length) {
       return Response(res, { message: 'Kahoots not found' }, status.NOT_FOUND);
     }
@@ -46,7 +46,7 @@ class KahootController implements Controller {
   };
   private getById = async (req: express.Request, res: express.Response) => {
     const { id } = req.params;
-    const kahoot = await this.kahoot.findById(id);
+    const kahoot = await this.kahoot.findById(id).lean();
     if (!kahoot) {
       return Response(res, { message: 'Kahoot not found' }, status.NOT_FOUND);
     }
@@ -54,7 +54,7 @@ class KahootController implements Controller {
   };
   private deleteById = async (req: express.Request, res: express.Response) => {
     const { id } = req.params;
-    const kahoot = await this.kahoot.findByIdAndDelete(id);
+    const kahoot = await this.kahoot.findByIdAndDelete(id).lean();
     if (!kahoot) {
       return Response(res, { message: 'Kahoot not found' }, status.NOT_FOUND);
     }
@@ -63,13 +63,15 @@ class KahootController implements Controller {
   private update = async (req: express.Request, res: express.Response) => {
     const { id } = req.params;
     const { userId, title }: Kahoot = req.body;
-    const newKahoot = await this.kahoot.findOneAndUpdate(
-      { _id: id },
-      {
-        $set: { userId, title }
-      },
-      { new: true }
-    );
+    const newKahoot = await this.kahoot
+      .findOneAndUpdate(
+        { _id: id },
+        {
+          $set: { userId, title }
+        },
+        { new: true }
+      )
+      .lean();
     if (!newKahoot) {
       return Response(res, { message: 'Kahoot not found' }, status.NOT_FOUND);
     }
