@@ -1,5 +1,5 @@
-import * as express from "express";
-import status from "http-status";
+import * as express from 'express';
+import status from 'http-status';
 
 const Response = (
   res: express.Response,

@@ -1,14 +1,14 @@
-import * as express from "express";
-import Controller from "@/interfaces/controller.interface";
-import Question from "./question.interface";
-import QuestionModel from "./question.model";
-import Response from "@/helpers/response.helper";
-import mongoose from "mongoose";
-import status from "http-status";
-import requireAuth from "@/middlewares/auth.middleware";
+import * as express from 'express';
+import Controller from '@/interfaces/controller.interface';
+import Question from './question.interface';
+import QuestionModel from './question.model';
+import Response from '@/helpers/response.helper';
+import mongoose from 'mongoose';
+import status from 'http-status';
+import requireAuth from '@/middlewares/auth.middleware';
 
 class QuestionController implements Controller {
-  public path = "/kahoots/:kahootId/questions";
+  public path = '/kahoots/:kahootId/questions';
   public router = express.Router();
   private question = QuestionModel;
 
@@ -33,7 +33,7 @@ class QuestionController implements Controller {
     await newQuestion.save();
     return Response(
       res,
-      { message: "Create completed", question: newQuestion },
+      { message: 'Create completed', question: newQuestion },
       status.CREATED
     );
   };
@@ -42,7 +42,7 @@ class QuestionController implements Controller {
     if (!questions.length) {
       return Response(
         res,
-        { message: "Questions not found" },
+        { message: 'Questions not found' },
         status.NOT_FOUND
       );
     }
@@ -52,7 +52,7 @@ class QuestionController implements Controller {
     const { id } = req.params;
     const question = await this.question.findById(id);
     if (!question) {
-      return Response(res, { message: "Question not found" }, status.NOT_FOUND);
+      return Response(res, { message: 'Question not found' }, status.NOT_FOUND);
     }
     Response(res, { question });
   };
@@ -60,9 +60,9 @@ class QuestionController implements Controller {
     const { id } = req.params;
     const question = await this.question.findByIdAndDelete(id);
     if (!question) {
-      return Response(res, { message: "Question not found" }, status.NOT_FOUND);
+      return Response(res, { message: 'Question not found' }, status.NOT_FOUND);
     }
-    Response(res, { message: "Delete completed", question }, status.CREATED);
+    Response(res, { message: 'Delete completed', question }, status.CREATED);
   };
   private update = async (req: express.Request, res: express.Response) => {
     const { id } = req.params;
@@ -75,11 +75,11 @@ class QuestionController implements Controller {
       { new: true }
     );
     if (!newQuestion) {
-      return Response(res, { message: "Question not found" }, status.NOT_FOUND);
+      return Response(res, { message: 'Question not found' }, status.NOT_FOUND);
     }
     return Response(
       res,
-      { message: "Edit completed", question: newQuestion },
+      { message: 'Edit completed', question: newQuestion },
       status.CREATED
     );
   };

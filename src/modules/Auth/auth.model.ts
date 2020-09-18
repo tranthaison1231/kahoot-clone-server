@@ -1,5 +1,5 @@
-import * as mongoose from "mongoose";
-import { User } from "./auth.interface";
+import * as mongoose from 'mongoose';
+import { User } from './auth.interface';
 
 const userSchema = new mongoose.Schema({
   username: String,
@@ -7,9 +7,9 @@ const userSchema = new mongoose.Schema({
 });
 
 const userModel = mongoose.model<User & mongoose.Document>(
-  "User",
+  'User',
   userSchema,
-  "users"
+  'users'
 );
 
 export default userModel;

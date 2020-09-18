@@ -1,6 +1,6 @@
-import * as mongoose from "mongoose";
+import * as mongoose from 'mongoose';
 const Schema = mongoose.Schema;
-import Question from "./question.interface";
+import Question from './question.interface';
 
 const questionSchema = new mongoose.Schema({
   kahootId: Schema.Types.ObjectId,
@@ -17,9 +17,9 @@ const questionSchema = new mongoose.Schema({
 });
 
 const questionModel = mongoose.model<Question & mongoose.Document>(
-  "Question",
+  'Question',
   questionSchema,
-  "questions"
+  'questions'
 );
 
 export default questionModel;
