@@ -1,17 +1,16 @@
-import * as mongoose from "mongoose";
+import * as mongoose from 'mongoose';
 const Schema = mongoose.Schema;
-import Kahoot from "./kahoot.interface";
+import Kahoot from './kahoot.interface';
 
 const kahootSchema = new mongoose.Schema({
   userId: Schema.Types.ObjectId,
-  title: String,
-  type: String
+  title: String
 });
 
 const kahootModel = mongoose.model<Kahoot & mongoose.Document>(
-  "Kahoot",
+  'Kahoot',
   kahootSchema,
-  "kahoots"
+  'kahoots'
 );
 
 export default kahootModel;

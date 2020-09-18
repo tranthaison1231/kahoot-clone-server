@@ -1,15 +1,15 @@
-import * as express from "express";
-import * as bcrypt from "bcrypt";
-import * as jwt from "jsonwebtoken";
-import status from "http-status";
-import Controller from "@/interfaces/controller.interface";
-import { Login, Register } from "./auth.interface";
-import authModel from "./auth.model";
-import Response from "@/helpers/response.helper";
-import { EXPIRED_TIME } from "@/constant";
+import * as express from 'express';
+import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
+import status from 'http-status';
+import Controller from '@/interfaces/controller.interface';
+import { Login, Register } from './auth.interface';
+import authModel from './auth.model';
+import Response from '@/helpers/response.helper';
+import { EXPIRED_TIME } from '@/constant';
 
 class AuthController implements Controller {
-  public path = "/auth";
+  public path = '/auth';
   public router = express.Router();
   private auth = authModel;
   private salt: number = 10;
@@ -29,16 +29,16 @@ class AuthController implements Controller {
     if (!user) {
       return Response(
         res,
-        { message: "User name does not exist" },
+        { message: 'User name does not exist' },
         status.FORBIDDEN
       );
     }
     const isPasswordCorrect = await bcrypt.compare(
-      password + "",
+      password + '',
       user.password
     );
     if (!isPasswordCorrect) {
-      return Response(res, { message: "Wrong password" }, status.FORBIDDEN);
+      return Response(res, { message: 'Wrong password' }, status.FORBIDDEN);
     }
     const payload = {
       username,
@@ -48,7 +48,7 @@ class AuthController implements Controller {
     const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
     return Response(
       res,
-      { message: "Login completed", accessToken },
+      { message: 'Login completed', accessToken },
       status.OK
     );
   };
@@ -60,14 +60,14 @@ class AuthController implements Controller {
     if (user) {
       return Response(
         res,
-        { message: "Username has been used" },
+        { message: 'Username has been used' },
         status.CONFLICT
       );
     }
     if (password !== confirmPassword) {
       return Response(
         res,
-        { message: "Password not matched" },
+        { message: 'Password not matched' },
         status.CONFLICT
       );
     }
@@ -77,7 +77,11 @@ class AuthController implements Controller {
       password: hashPassword
     });
     await newUser.save();
-    return Response(res, { user: newUser }, status.CREATED);
+    return Response(
+      res,
+      { message: 'Register completed', username },
+      status.CREATED
+    );
   };
 }
 export default AuthController;
