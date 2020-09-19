@@ -1,9 +1,13 @@
 import * as mongoose from 'mongoose';
-const Schema = mongoose.Schema;
 import Question from './question.interface';
 
+const Schema = mongoose.Schema;
+
 const questionSchema = new mongoose.Schema({
-  kahootId: Schema.Types.ObjectId,
+  kahootId: {
+    type: Schema.Types.ObjectId,
+    get: toObjectId
+  },
   content: String,
   image: String,
   timeLimit: Number,
@@ -15,6 +19,10 @@ const questionSchema = new mongoose.Schema({
   },
   correctAnswer: String
 });
+
+function toObjectId(kahootId: string) {
+  return mongoose.Types.ObjectId(kahootId);
+}
 
 const questionModel = mongoose.model<Question & mongoose.Document>(
   'Question',

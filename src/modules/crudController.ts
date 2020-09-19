@@ -5,7 +5,6 @@ import Response from '../helpers/response.helper';
 export default abstract class CrudController {
   abstract model: any;
   abstract controllerName: string;
-  abstract path: string;
 
   getAll = async (req: express.Request, res: express.Response) => {
     try {
@@ -17,8 +16,9 @@ export default abstract class CrudController {
           status.NOT_FOUND
         );
       }
+      return Response(res, { [this.controllerName]: datas });
     } catch (error) {
-      Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+      return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }
   };
   getById = async (req: express.Request, res: express.Response) => {
@@ -34,9 +34,9 @@ export default abstract class CrudController {
           status.NOT_FOUND
         );
       }
-      Response(res, { [this.controllerName]: data });
+      return Response(res, { [this.controllerName]: data });
     } catch (error) {
-      Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+      return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }
   };
   post = async (req: express.Request, res: express.Response) => {
@@ -49,7 +49,7 @@ export default abstract class CrudController {
         status.CREATED
       );
     } catch (error) {
-      Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+      return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }
   };
   deleteById = async (req: express.Request, res: express.Response) => {
@@ -65,12 +65,12 @@ export default abstract class CrudController {
           status.NOT_FOUND
         );
       }
-      Response(res, {
+      return Response(res, {
         message: 'Delete completed',
         [this.controllerName]: data
       });
     } catch (error) {
-      Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+      return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }
   };
   update = async (req: express.Request, res: express.Response) => {
@@ -98,7 +98,7 @@ export default abstract class CrudController {
         status.OK
       );
     } catch (error) {
-      Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+      return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }
   };
 }

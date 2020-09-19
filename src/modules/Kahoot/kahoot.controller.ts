@@ -1,13 +1,13 @@
-import Controller from '@/interfaces/controller.interface';
-import requireAuth from '@/middlewares/auth.middleware';
-import CrudController from '@/modules/crudController';
 import * as express from 'express';
 import kahootModel from './kahoot.model';
+import CrudController from '@/modules/crudController';
+import requireAuth from '@/middlewares/auth.middleware';
+import Controller from '@/interfaces/controller.interface';
 
 class KahootController extends CrudController implements Controller {
   public router = express.Router();
+  public path = '/kahoots';
   model = kahootModel;
-  path = '/kahoots';
   controllerName = 'kahoot';
 
   constructor() {
