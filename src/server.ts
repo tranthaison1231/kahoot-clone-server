@@ -15,8 +15,8 @@ const app = new Express({
   middleWares: MDW,
   databases: [MongoDB],
   controllers: [
-    new KahootController(),
     new AuthController(),
+    new KahootController(),
     new QuestionController()
   ]
 });

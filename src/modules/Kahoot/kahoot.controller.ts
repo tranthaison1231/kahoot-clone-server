@@ -5,7 +5,6 @@ import requireAuth from '@/middlewares/auth.middleware';
 import Controller from '@/interfaces/controller.interface';
 
 class KahootController extends CrudController implements Controller {
-  public router = express.Router();
   public path = '/kahoots';
   model = kahootModel;
   controllerName = 'kahoot';

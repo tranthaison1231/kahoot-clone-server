@@ -34,7 +34,7 @@ class AuthController implements Controller {
       );
     }
     const isPasswordCorrect = await bcrypt.compare(
-      password + '',
+      password.toString(),
       user.password
     );
     if (!isPasswordCorrect) {

@@ -8,7 +8,6 @@ import Controller from '@/interfaces/controller.interface';
 
 class QuestionController extends CrudController implements Controller {
   public path = '/kahoots/:kahootId/questions';
-  public router = express.Router();
   model = questionModel;
   controllerName = 'question';
 

@@ -5,6 +5,7 @@ import Response from '../helpers/response.helper';
 export default abstract class CrudController {
   abstract model: any;
   abstract controllerName: string;
+  public router = express.Router();
 
   getAll = async (req: express.Request, res: express.Response) => {
     try {
