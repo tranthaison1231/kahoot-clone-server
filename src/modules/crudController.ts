@@ -4,20 +4,12 @@ import Response from '../helpers/response.helper';
 
 export default abstract class CrudController {
   abstract model: any;
-  abstract controllerName: string;
   public router = express.Router();
 
   getAll = async (req: express.Request, res: express.Response) => {
     try {
-      const datas = await this.model.find().lean();
-      if (!datas.length) {
-        return Response(
-          res,
-          { message: `${this.controllerName} not found` },
-          status.NOT_FOUND
-        );
-      }
-      return Response(res, { [this.controllerName]: datas });
+      const data = await this.model.find().lean();
+      return Response(res, { data });
     } catch (error) {
       return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }
@@ -30,23 +22,23 @@ export default abstract class CrudController {
         return Response(
           res,
           {
-            message: `${this.controllerName} not found`
+            message: `${id} not found`
           },
           status.NOT_FOUND
         );
       }
-      return Response(res, { [this.controllerName]: data });
+      return Response(res, { data });
     } catch (error) {
       return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }
   };
   post = async (req: express.Request, res: express.Response) => {
     try {
-      const newData = new this.model(req.body);
-      await newData.save();
+      const data = new this.model(req.body);
+      await data.save();
       return Response(
         res,
-        { message: 'Create completed', [this.controllerName]: newData },
+        { message: 'Create completed', data },
         status.CREATED
       );
     } catch (error) {
@@ -61,15 +53,12 @@ export default abstract class CrudController {
         return Response(
           res,
           {
-            message: `${this.controllerName} not found`
+            message: `${id} not found`
           },
           status.NOT_FOUND
         );
       }
-      return Response(res, {
-        message: 'Delete completed',
-        [this.controllerName]: data
-      });
+      return Response(res, { message: 'Delete completed', data });
     } catch (error) {
       return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }
@@ -77,7 +66,7 @@ export default abstract class CrudController {
   update = async (req: express.Request, res: express.Response) => {
     try {
       const { id } = req.params;
-      const newData = await this.model
+      const data = await this.model
         .findOneAndUpdate(
           { _id: id },
           {
@@ -86,18 +75,10 @@ export default abstract class CrudController {
           { new: true }
         )
         .lean();
-      if (!newData) {
-        return Response(
-          res,
-          { message: `${this.controllerName} not found` },
-          status.NOT_FOUND
-        );
+      if (!data) {
+        return Response(res, { message: `${id} not found` }, status.NOT_FOUND);
       }
-      return Response(
-        res,
-        { message: 'Edit completed', [this.controllerName]: newData },
-        status.OK
-      );
+      return Response(res, { message: 'Edit completed', data }, status.OK);
     } catch (error) {
       return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }

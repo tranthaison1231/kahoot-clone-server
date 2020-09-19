@@ -7,7 +7,6 @@ import Controller from '@/interfaces/controller.interface';
 class KahootController extends CrudController implements Controller {
   public path = '/kahoots';
   model = kahootModel;
-  controllerName = 'kahoot';
 
   constructor() {
     super();
@@ -15,15 +14,11 @@ class KahootController extends CrudController implements Controller {
   }
 
   initializeRoutes = () => {
-    this.router.post(this.path, requireAuth, this.post.bind(this));
-    this.router.get(this.path, requireAuth, this.getAll.bind(this));
-    this.router.put(`${this.path}/:id`, requireAuth, this.update.bind(this));
-    this.router.get(`${this.path}/:id`, requireAuth, this.getById.bind(this));
-    this.router.delete(
-      `${this.path}/:id`,
-      requireAuth,
-      this.deleteById.bind(this)
-    );
+    this.router.post(this.path, requireAuth, this.post);
+    this.router.get(this.path, requireAuth, this.getAll);
+    this.router.put(`${this.path}/:id`, requireAuth, this.update);
+    this.router.get(`${this.path}/:id`, requireAuth, this.getById);
+    this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
   };
 }
 export default KahootController;

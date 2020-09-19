@@ -9,7 +9,6 @@ import Controller from '@/interfaces/controller.interface';
 class QuestionController extends CrudController implements Controller {
   public path = '/kahoots/:kahootId/questions';
   model = questionModel;
-  controllerName = 'question';
 
   constructor() {
     super();
@@ -17,15 +16,11 @@ class QuestionController extends CrudController implements Controller {
   }
 
   public initializeRoutes = () => {
-    this.router.post(this.path, requireAuth, this.post.bind(this));
+    this.router.post(this.path, requireAuth, this.post);
     this.router.get(this.path, requireAuth, this.getQuestions);
-    this.router.put(`${this.path}/:id`, requireAuth, this.update.bind(this));
-    this.router.get(`${this.path}/:id`, requireAuth, this.getById.bind(this));
-    this.router.delete(
-      `${this.path}/:id`,
-      requireAuth,
-      this.deleteById.bind(this)
-    );
+    this.router.put(`${this.path}/:id`, requireAuth, this.update);
+    this.router.get(`${this.path}/:id`, requireAuth, this.getById);
+    this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
   };
 
   private getQuestions = async (
@@ -33,15 +28,8 @@ class QuestionController extends CrudController implements Controller {
     res: express.Response
   ) => {
     const { kahootId } = req.params;
-    const questions = await this.model.find({ kahootId }).lean();
-    if (!questions.length) {
-      return Response(
-        res,
-        { message: 'Questions not found' },
-        status.NOT_FOUND
-      );
-    }
-    Response(res, { questions });
+    const data = await this.model.find({ kahootId }).lean();
+    return Response(res, { data });
   };
 }
 export default QuestionController;
