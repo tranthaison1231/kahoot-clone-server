@@ -1,21 +1,13 @@
-import * as express from "express";
+import * as express from 'express';
+import status from 'http-status';
 
-const Response = {
-  success: (res: express.Response, data: any, status = 200) => {
-    return res.status(status).json({
-      success: true,
-      ...data
-    });
-  },
-  error: (res: express.Response, err: any, status = 400) => {
-    return res.status(status).json({
-      success: false,
-      error: {
-        message: err.message,
-        type: err.type,
-        errors: err.errors
-      }
-    });
-  }
+const Response = (
+  res: express.Response,
+  data: Object,
+  statusCode = status.OK
+) => {
+  return res.status(statusCode).json({
+    ...data
+  });
 };
 export default Response;

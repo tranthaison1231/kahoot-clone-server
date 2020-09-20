@@ -1,59 +1,87 @@
 import * as express from 'express';
 import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
+import status from 'http-status';
 import Controller from '@/interfaces/controller.interface';
 import { Login, Register } from './auth.interface';
-import authModel from './auth.model';
+import UserModel from './user.model';
 import Response from '@/helpers/response.helper';
+import { EXPIRED_TIME } from '@/constant';
 
 class AuthController implements Controller {
   public path = '/auth';
   public router = express.Router();
-  private auth = authModel;
+  private user = UserModel;
   private salt: number = 10;
 
   constructor() {
     this.initializeRoutes();
   }
 
-  private initializeRoutes() {
-    this.router.post(`${this.path}/login`, this.Login);
-    this.router.post(`${this.path}/register`, this.Register);
-  }
+  public initializeRoutes = () => {
+    this.router.post(`${this.path}/login`, this.login);
+    this.router.post(`${this.path}/register`, this.register);
+  };
 
-  private Login = async (req: express.Request, res: express.Response) => {
+  private login = async (req: express.Request, res: express.Response) => {
     const { username, password }: Login = req.body;
-    const user = await this.auth.findOne({ username });
+    const user = await this.user.findOne({ username });
     if (!user) {
-      return Response.error(res, { message: 'User name does not exist' }, 403);
+      return Response(
+        res,
+        { message: 'User name does not exist' },
+        status.FORBIDDEN
+      );
     }
     const isPasswordCorrect = await bcrypt.compare(
-      password + '',
+      password.toString(),
       user.password
     );
     if (!isPasswordCorrect) {
-      return Response.error(res, { message: 'Wrong password' }, 403);
+      return Response(res, { message: 'Wrong password' }, status.FORBIDDEN);
     }
-
-    return Response.success(res, { user }, 201);
+    const payload = {
+      username,
+      userId: user._id,
+      exp: Date.now() + EXPIRED_TIME,
+    };
+    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
+    return Response(
+      res,
+      { message: 'Login completed', accessToken },
+      status.OK
+    );
   };
 
-  private Register = async (req: express.Request, res: express.Response) => {
+  private register = async (req: express.Request, res: express.Response) => {
     const { username, password, confirmPassword }: Register = req.body;
 
-    const user = await this.auth.findOne({ username });
+    const user = await this.user.findOne({ username });
     if (user) {
-      return Response.error(res, { message: 'Username has been used' }, 403);
+      return Response(
+        res,
+        { message: 'Username has been used' },
+        status.CONFLICT
+      );
     }
     if (password !== confirmPassword) {
-      return Response.error(res, { message: 'Password not matched' }, 403);
+      return Response(
+        res,
+        { message: 'Password not matched' },
+        status.CONFLICT
+      );
     }
     const hashPassword = await bcrypt.hash(password, this.salt);
-    const newUser = new this.auth({
+    const newUser = new this.user({
       username,
       password: hashPassword,
     });
     await newUser.save();
-    return Response.success(res, { user: newUser }, 201);
+    return Response(
+      res,
+      { message: 'Register completed', username },
+      status.CREATED
+    );
   };
 }
 export default AuthController;
