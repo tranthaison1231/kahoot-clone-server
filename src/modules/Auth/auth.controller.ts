@@ -2,10 +2,9 @@ import * as express from 'express';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import status from 'http-status';
-import Controller from '@/interfaces/controller.interface';
 import { Login, Register } from './auth.interface';
 import UserModel from './user.model';
-import Response from '@/helpers/response.helper';
+import { Response, Controller } from '@shyn123/express-rest';
 import { EXPIRED_TIME } from '@/constant';
 
 class AuthController implements Controller {
