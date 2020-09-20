@@ -1,5 +1,4 @@
 interface Question {
-  kahootId: string;
   content: string;
   image: string;
   timeLimit: number;

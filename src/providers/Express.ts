@@ -1,6 +1,6 @@
-import express from "express";
-import { Application } from "express";
-import logger from "@/ultis/logger";
+import express from 'express';
+import { Application } from 'express';
+import logger from '@/ultis/logger';
 
 interface AppConstructor {
   forEach: (arg0: (controller: any) => void) => void;
@@ -26,7 +26,7 @@ class Express {
 
   private routes(controllers: AppConstructor): void {
     controllers.forEach((controller) => {
-      this.app.use("/", controller.router);
+      this.app.use('/', controller.router);
     });
   }
   private middlewares(middleWares: AppConstructor): void {
@@ -45,7 +45,7 @@ class Express {
   public listen(): void {
     this.app.listen(this.port, () => {
       logger({
-        type: "Success",
+        type: 'Success',
         message: `Server is listening on http://localhost:${this.port}`
       });
     });

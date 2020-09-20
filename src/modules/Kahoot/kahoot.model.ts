@@ -1,17 +1,31 @@
-import * as mongoose from "mongoose";
+import * as mongoose from 'mongoose';
+import Kahoot from './kahoot.interface';
+
 const Schema = mongoose.Schema;
-import Kahoot from "./kahoot.interface";
 
 const kahootSchema = new mongoose.Schema({
-  userId: Schema.Types.ObjectId,
+  userId: {
+    type: Schema.Types.ObjectId,
+    get: toObjectId
+  },
   title: String,
-  type: String
+  questions: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Question',
+      default: []
+    }
+  ]
 });
 
+function toObjectId(userId: string) {
+  return mongoose.Types.ObjectId(userId);
+}
+
 const kahootModel = mongoose.model<Kahoot & mongoose.Document>(
-  "Kahoot",
+  'Kahoot',
   kahootSchema,
-  "kahoots"
+  'kahoots'
 );
 
 export default kahootModel;
