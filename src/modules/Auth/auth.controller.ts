@@ -1,12 +1,12 @@
-import * as express from "express";
-import * as bcrypt from "bcrypt";
-import Controller from "@/interfaces/controller.interface";
-import { Login, Register } from "./auth.interface";
-import authModel from "./auth.model";
-import Response from "@/helpers/response.helper";
+import * as express from 'express';
+import * as bcrypt from 'bcrypt';
+import Controller from '@/interfaces/controller.interface';
+import { Login, Register } from './auth.interface';
+import authModel from './auth.model';
+import Response from '@/helpers/response.helper';
 
 class AuthController implements Controller {
-  public path = "/auth";
+  public path = '/auth';
   public router = express.Router();
   private auth = authModel;
   private salt: number = 10;
@@ -24,14 +24,14 @@ class AuthController implements Controller {
     const { username, password }: Login = req.body;
     const user = await this.auth.findOne({ username });
     if (!user) {
-      return Response.error(res, { message: "User name does not exist" }, 403);
+      return Response.error(res, { message: 'User name does not exist' }, 403);
     }
     const isPasswordCorrect = await bcrypt.compare(
-      password + "",
+      password + '',
       user.password
     );
     if (!isPasswordCorrect) {
-      return Response.error(res, { message: "Wrong password" }, 403);
+      return Response.error(res, { message: 'Wrong password' }, 403);
     }
 
     return Response.success(res, { user }, 201);
@@ -42,15 +42,15 @@ class AuthController implements Controller {
 
     const user = await this.auth.findOne({ username });
     if (user) {
-      return Response.error(res, { message: "Username has been used" }, 403);
+      return Response.error(res, { message: 'Username has been used' }, 403);
     }
     if (password !== confirmPassword) {
-      return Response.error(res, { message: "Password not matched" }, 403);
+      return Response.error(res, { message: 'Password not matched' }, 403);
     }
     const hashPassword = await bcrypt.hash(password, this.salt);
     const newUser = new this.auth({
       username,
-      password: hashPassword
+      password: hashPassword,
     });
     await newUser.save();
     return Response.success(res, { user: newUser }, 201);
