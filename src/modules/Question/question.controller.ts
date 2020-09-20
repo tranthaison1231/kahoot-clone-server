@@ -2,10 +2,8 @@ import status from 'http-status';
 import * as express from 'express';
 import QuestionModel from './question.model';
 import KahootModel from '@/modules/Kahoot/kahoot.model';
-import Response from '@/helpers/response.helper';
-import CrudController from '@/modules/Common/crudController';
+import { Response, CrudController, Controller } from '@shyn123/express-rest';
 import requireAuth from '@/middlewares/auth.middleware';
-import Controller from '@/interfaces/controller.interface';
 
 class QuestionController extends CrudController implements Controller {
   public path = '/kahoots/:kahootId/questions';

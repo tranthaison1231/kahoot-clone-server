@@ -1,11 +1,8 @@
 import * as express from 'express';
 import KahootModel from './kahoot.model';
-import CrudController from '@/modules/Common/crudController';
 import requireAuth from '@/middlewares/auth.middleware';
-import Controller from '@/interfaces/controller.interface';
 import status from 'http-status';
-import Response from '@/helpers/response.helper';
-
+import { Response, CrudController, Controller } from '@shyn123/express-rest';
 class KahootController extends CrudController implements Controller {
   public path = '/kahoots';
   model = KahootModel;
@@ -30,7 +27,7 @@ class KahootController extends CrudController implements Controller {
         return Response(
           res,
           {
-            message: `${id} not found`
+            message: `${id} not found`,
           },
           status.NOT_FOUND
         );

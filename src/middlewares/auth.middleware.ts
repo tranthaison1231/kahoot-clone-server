@@ -1,8 +1,7 @@
 import express from 'express';
 import status from 'http-status';
 import * as jwt from 'jsonwebtoken';
-import Response from '@/helpers/response.helper';
-
+import { Response } from '@shyn123/express-rest';
 interface customRequest extends express.Request {
   tokenPayload: object;
 }

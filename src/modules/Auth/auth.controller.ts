@@ -2,10 +2,9 @@ import * as express from 'express';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import status from 'http-status';
-import Controller from '@/interfaces/controller.interface';
 import { Login, Register } from './auth.interface';
 import UserModel from './user.model';
-import Response from '@/helpers/response.helper';
+import { Response, Controller } from '@shyn123/express-rest';
 import { EXPIRED_TIME } from '@/constant';
 
 class AuthController implements Controller {
@@ -43,7 +42,7 @@ class AuthController implements Controller {
     const payload = {
       username,
       userId: user._id,
-      exp: Date.now() + EXPIRED_TIME
+      exp: Date.now() + EXPIRED_TIME,
     };
     const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
     return Response(
@@ -74,7 +73,7 @@ class AuthController implements Controller {
     const hashPassword = await bcrypt.hash(password, this.salt);
     const newUser = new this.user({
       username,
-      password: hashPassword
+      password: hashPassword,
     });
     await newUser.save();
     return Response(

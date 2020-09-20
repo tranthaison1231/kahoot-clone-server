@@ -2,7 +2,7 @@ import 'module-alias/register';
 require('dotenv').config();
 import cors from 'cors';
 import morgan from 'morgan';
-import Express from '@/providers/Express';
+import { Express } from '@shyn123/express-rest';
 import AuthController from '@/modules/Auth/auth.controller';
 import KahootController from '@/modules/Kahoot/kahoot.controller';
 import QuestionController from '@/modules/Question/question.controller';
@@ -17,7 +17,8 @@ const app = new Express({
   controllers: [
     new AuthController(),
     new KahootController(),
-    new QuestionController()
-  ]
+    new QuestionController(),
+  ],
 });
+
 app.listen();
