@@ -4,14 +4,14 @@ import * as jwt from 'jsonwebtoken';
 import status from 'http-status';
 import Controller from '@/interfaces/controller.interface';
 import { Login, Register } from './auth.interface';
-import authModel from './auth.model';
+import UserModel from './user.model';
 import Response from '@/helpers/response.helper';
 import { EXPIRED_TIME } from '@/constant';
 
 class AuthController implements Controller {
   public path = '/auth';
   public router = express.Router();
-  private auth = authModel;
+  private user = UserModel;
   private salt: number = 10;
 
   constructor() {
@@ -25,7 +25,7 @@ class AuthController implements Controller {
 
   private login = async (req: express.Request, res: express.Response) => {
     const { username, password }: Login = req.body;
-    const user = await this.auth.findOne({ username });
+    const user = await this.user.findOne({ username });
     if (!user) {
       return Response(
         res,
@@ -56,7 +56,7 @@ class AuthController implements Controller {
   private register = async (req: express.Request, res: express.Response) => {
     const { username, password, confirmPassword }: Register = req.body;
 
-    const user = await this.auth.findOne({ username });
+    const user = await this.user.findOne({ username });
     if (user) {
       return Response(
         res,
@@ -72,7 +72,7 @@ class AuthController implements Controller {
       );
     }
     const hashPassword = await bcrypt.hash(password, this.salt);
-    const newUser = new this.auth({
+    const newUser = new this.user({
       username,
       password: hashPassword
     });

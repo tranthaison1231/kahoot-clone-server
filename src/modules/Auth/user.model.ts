@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import { User } from './auth.interface';
+import * as bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
   username: String,

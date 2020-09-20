@@ -8,7 +8,14 @@ const kahootSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     get: toObjectId
   },
-  title: String
+  title: String,
+  questions: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Question',
+      default: []
+    }
+  ]
 });
 
 function toObjectId(userId: string) {
