@@ -12,8 +12,7 @@ const kahootSchema = new mongoose.Schema({
   questions: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Question',
-      default: []
+      ref: 'Question'
     }
   ]
 });
