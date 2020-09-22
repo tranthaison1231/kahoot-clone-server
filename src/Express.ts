@@ -53,6 +53,9 @@ class Express {
     });
     if (this.socket) {
       const io = require('socket.io')(server);
+      io.on('connection', (socket: any) => {
+        this.app.set('socket', socket);
+      });
       this.app.set('io', io);
     }
   }
