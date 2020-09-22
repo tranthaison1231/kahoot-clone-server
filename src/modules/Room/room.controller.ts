@@ -1,32 +1,40 @@
-import roomModel from './room.model';
-import playerModel from './player.model';
-import * as express from 'express';
+import express from 'express';
 import status from 'http-status';
-import { Room } from './room.interface';
+import roomModel from './room.model';
 import { Request, Response } from 'express';
-import {
-  Response as HttpResponse,
-  CrudController,
-  Controller
-} from '@shyn123/express-rest';
+import playerModel from '@/modules/Player/player.model';
+import { Controller, Response as HttpResponse } from '@shyn123/express-rest';
 
-class RoomController extends CrudController implements Controller {
+class RoomController implements Controller {
   public path = '/rooms';
-  model = roomModel;
+  public router = express.Router();
+
+  private model = roomModel;
   private player = playerModel;
+
   constructor() {
-    super();
     this.initializeRoutes();
   }
 
   public initializeRoutes = () => {
     this.router.post(this.path, this.post);
     this.router.get(this.path, this.getByPin);
+    this.router.get(`${this.path}/:id`, this.getById);
     this.router.patch(`${this.path}/:id/join`, this.join);
-    this.router.patch(`${this.path}/:id/:roomStatus`, this.status);
-    this.router.get(`${this.path}/:id`, this.getKahootById);
-    // this.router.delete(`${this.path}/:id`, this.deleteById);
-    // this.router.get(this.path, this.getAll); // for testing
+    this.router.patch(`${this.path}/:id/:roomStatus`, this.changeStatus);
+  };
+  private post = async (req: Request, res: Response) => {
+    try {
+      const data = new this.model(req.body);
+      await data.save();
+      return HttpResponse(
+        res,
+        { message: 'Create completed', data },
+        status.CREATED
+      );
+    } catch (error) {
+      return HttpResponse(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+    }
   };
   private getByPin = async (req: Request, res: Response) => {
     try {
@@ -89,8 +97,7 @@ class RoomController extends CrudController implements Controller {
       return HttpResponse(res, { error }, status.INTERNAL_SERVER_ERROR);
     }
   };
-
-  private status = async (req: Request, res: Response) => {
+  private changeStatus = async (req: Request, res: Response) => {
     try {
       const { roomStatus, id } = req.params;
       const io = req.app.get('io');
@@ -121,7 +128,7 @@ class RoomController extends CrudController implements Controller {
       return HttpResponse(res, { error }, status.INTERNAL_SERVER_ERROR);
     }
   };
-  private getKahootById = async (req: Request, res: Response) => {
+  private getById = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const socket = req.app.get('socket');
@@ -140,12 +147,6 @@ class RoomController extends CrudController implements Controller {
     } catch (error) {
       return HttpResponse(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }
-  };
-  private submit = async (req: Request, res: Response) => {
-    // nhan vao question, submitedAnswer,
-    // so sanh question.correctAnswer voi submitedAnswer
-    // neu trung thi cong point
-    // luu voa db
   };
 }
 export default RoomController;

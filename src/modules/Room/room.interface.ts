@@ -1,5 +1,4 @@
 import Question from '@/modules/Question/question.interface';
-import QuestionController from '../Question/question.controller';
 
 type Status = 'PENDING' | 'PLAYING' | 'FINISH';
 
@@ -8,7 +7,7 @@ interface Room {
   pin: number;
   players: Player[];
   status: Status;
-  // currentQuestion: Question;
+  currentQuestion: Question;
 }
 interface Player {
   username: number;

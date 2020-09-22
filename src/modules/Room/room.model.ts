@@ -1,4 +1,4 @@
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
 import { Room } from './room.interface';
 import { randomPin } from '@/utils/index';
 const Schema = mongoose.Schema;
@@ -21,13 +21,12 @@ const roomSchema = new mongoose.Schema({
   ],
   status: {
     type: String,
-    default: 'Pending'
+    default: 'PENDING'
+  },
+  currentQuestion: {
+    type: Schema.Types.ObjectId,
+    ref: 'Question'
   }
-  // currentQuestion: {
-  //   type: Object,
-  //   ref: 'Question',
-  //   required: true
-  // }
 });
 
 const roomModel = mongoose.model<Room & mongoose.Document>(

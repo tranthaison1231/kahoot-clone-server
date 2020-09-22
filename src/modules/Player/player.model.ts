@@ -1,5 +1,5 @@
-import * as mongoose from 'mongoose';
-import { Player } from './room.interface';
+import mongoose from 'mongoose';
+import { Player } from '@/modules/Room/room.interface';
 
 const playerSchema = new mongoose.Schema({
   username: String,
