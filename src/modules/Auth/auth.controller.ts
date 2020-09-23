@@ -42,7 +42,7 @@ class AuthController implements Controller {
     const payload = {
       username,
       userId: user._id,
-      exp: Date.now() + EXPIRED_TIME,
+      exp: Date.now() + EXPIRED_TIME
     };
     const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
     return Response(
@@ -73,12 +73,18 @@ class AuthController implements Controller {
     const hashPassword = await bcrypt.hash(password, this.salt);
     const newUser = new this.user({
       username,
-      password: hashPassword,
+      password: hashPassword
     });
     await newUser.save();
+    const payload = {
+      username,
+      userId: newUser._id,
+      exp: Date.now() + EXPIRED_TIME
+    };
+    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
     return Response(
       res,
-      { message: 'Register completed', username },
+      { message: 'Register completed', accessToken },
       status.CREATED
     );
   };
