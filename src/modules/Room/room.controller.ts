@@ -1,17 +1,16 @@
 import express from 'express';
 import status from 'http-status';
-import roomModel from './room.model';
+import RoomModel from './room.model';
 import { Request, Response } from 'express';
-import playerModel from '@/modules/Player/player.model';
+import PlayerModel from '@/modules/Player/player.model';
 import { Controller, Response as HttpResponse } from '@shyn123/express-rest';
 
 class RoomController implements Controller {
   public path = '/rooms';
   public router = express.Router();
 
-  private model = roomModel;
-  private player = playerModel;
-
+  private model = RoomModel;
+  private player = PlayerModel;
   constructor() {
     this.initializeRoutes();
   }

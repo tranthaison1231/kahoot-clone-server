@@ -28,7 +28,6 @@ const requireAuth = async (
       return Response(res, { message: 'Token expired' }, status.UNAUTHORIZED);
     }
     req.tokenPayload = payload;
-    console.log(req.tokenPayload);
     next();
   } catch (e) {
     return Response(res, { message: 'Invalid token' }, status.UNAUTHORIZED);

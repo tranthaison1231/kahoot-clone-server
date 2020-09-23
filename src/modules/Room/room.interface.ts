@@ -1,18 +1,18 @@
 import Question from '@/modules/Question/question.interface';
+import Kahoot from '@/modules/Kahoot/kahoot.interface';
 
 type Status = 'PENDING' | 'PLAYING' | 'FINISH';
 
-interface Room {
-  kahoot: string;
+export interface Room {
+  kahoot: Kahoot;
   pin: number;
   players: Player[];
   status: Status;
   currentQuestion: Question;
 }
-interface Player {
+export interface Player {
   username: number;
   points: number;
   questions: Question[];
   answers: Object[];
 }
-export { Room, Player };
