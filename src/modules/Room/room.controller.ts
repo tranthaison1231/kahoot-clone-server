@@ -88,6 +88,7 @@ class RoomController implements Controller {
         )
         .populate('kahoot')
         .populate('players')
+        .populate('currentQuestion')
         .lean();
 
       socket.join(data.pin);
@@ -114,6 +115,9 @@ class RoomController implements Controller {
           { $set: { status: roomStatus === 'playing' ? 'PLAYING' : 'FINISH' } },
           { new: true }
         )
+        .populate('kahoot')
+        .populate('players')
+        .populate('currentQuestion')
         .lean();
       if (!data) {
         return HttpResponse(
@@ -132,7 +136,12 @@ class RoomController implements Controller {
     try {
       const { id } = req.params;
       const socket = req.app.get('socket');
-      const data = await this.model.findById(id).populate('players').lean();
+      const data = await this.model
+        .findById(id)
+        .populate('kahoot')
+        .populate('players')
+        .populate('currentQuestion')
+        .lean();
       if (!data) {
         return HttpResponse(
           res,
