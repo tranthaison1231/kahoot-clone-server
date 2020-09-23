@@ -27,7 +27,7 @@ class KahootController extends CrudController implements Controller {
         return Response(
           res,
           {
-            message: `${id} not found`,
+            message: `${id} not found`
           },
           status.NOT_FOUND
         );

@@ -2,12 +2,19 @@ import express from 'express';
 import status from 'http-status';
 import * as jwt from 'jsonwebtoken';
 import { Response } from '@shyn123/express-rest';
-interface customRequest extends express.Request {
-  tokenPayload: object;
+
+interface tokenPayload {
+  username: string;
+  userId: string;
+  exp: number;
+  iat: number;
+}
+interface CustomRequest extends express.Request {
+  tokenPayload: tokenPayload;
 }
 
 const requireAuth = async (
-  req: customRequest,
+  req: CustomRequest,
   res: express.Response,
   next: express.NextFunction
 ) => {
