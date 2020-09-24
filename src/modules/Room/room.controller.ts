@@ -16,13 +16,13 @@ class RoomController implements Controller {
   }
 
   public initializeRoutes = () => {
-    this.router.post(this.path, this.post);
+    this.router.post(this.path, this.create);
     this.router.get(this.path, this.getByPin);
     this.router.get(`${this.path}/:id`, this.getById);
     this.router.patch(`${this.path}/:id/join`, this.join);
     this.router.patch(`${this.path}/:id/:roomStatus`, this.changeStatus);
   };
-  private post = async (req: Request, res: Response) => {
+  create = async (req: Request, res: Response) => {
     try {
       const data = new this.model(req.body);
       await data.save();
