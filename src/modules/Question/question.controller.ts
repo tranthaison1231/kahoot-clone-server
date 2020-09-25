@@ -16,15 +16,12 @@ class QuestionController extends CrudController implements Controller {
 
   public initializeRoutes = () => {
     this.router.get(this.path, requireAuth, this.getAll);
-    this.router.post(this.path, requireAuth, this.postQuestion);
+    this.router.post(this.path, requireAuth, this.create);
     this.router.put(`${this.path}/:id`, requireAuth, this.update);
     this.router.get(`${this.path}/:id`, requireAuth, this.getById);
     this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
   };
-  private postQuestion = async (
-    req: express.Request,
-    res: express.Response
-  ) => {
+  create = async (req: express.Request, res: express.Response) => {
     try {
       const { kahootId } = req.params;
       const data = new this.model(req.body);
