@@ -1,0 +1,15 @@
+openapi: '3.0.0'
+info:
+  version: 2.0.0
+  title: Todo API
+  license:
+    name: MIT
+servers:
+  - url: localhost:3001/docs
+security:
+  - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
