@@ -14,10 +14,22 @@ class KahootController extends CrudController implements Controller {
 
   initializeRoutes = () => {
     this.router.post(this.path, requireAuth, this.create);
-    this.router.get(this.path, requireAuth, this.getAll);
+    this.router.get(`${this.path}/user/:userId`, requireAuth, this.getAll);
     this.router.put(`${this.path}/:id`, requireAuth, this.update);
     this.router.get(`${this.path}/:id`, requireAuth, this.getById);
     this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
+  };
+  getAll = async (req: express.Request, res: express.Response) => {
+    try {
+      const { userId } = req.params;
+      const data = await this.model
+        .find({ userId })
+        .populate('questions')
+        .lean();
+      return Response(res, { data });
+    } catch (error) {
+      return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+    }
   };
   getById = async (req: express.Request, res: express.Response) => {
     try {
