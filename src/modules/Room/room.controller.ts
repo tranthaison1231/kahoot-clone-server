@@ -131,7 +131,7 @@ class RoomController implements Controller {
       return HttpResponse(res, { error }, status.INTERNAL_SERVER_ERROR);
     }
   };
-  private getById = async (req: Request, res: Response) => {
+  getById = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const socket = req.app.get('socket');
