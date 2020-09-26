@@ -3,6 +3,7 @@ import KahootModel from './kahoot.model';
 import requireAuth from '@/middlewares/auth.middleware';
 import status from 'http-status';
 import { Response, CrudController, Controller } from '@shyn123/express-rest';
+import { RequestWithUser } from '@/middlewares/auth.middleware';
 class KahootController extends CrudController implements Controller {
   public path = '/kahoots';
   model = KahootModel;
@@ -14,16 +15,16 @@ class KahootController extends CrudController implements Controller {
 
   initializeRoutes = () => {
     this.router.post(this.path, requireAuth, this.create);
-    this.router.get(`${this.path}/user/:userId`, requireAuth, this.getAll);
+    this.router.get(this.path, requireAuth, this.getAll);
     this.router.put(`${this.path}/:id`, requireAuth, this.update);
     this.router.get(`${this.path}/:id`, requireAuth, this.getById);
     this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
   };
-  getAll = async (req: express.Request, res: express.Response) => {
+  getAll = async (req: RequestWithUser, res: express.Response) => {
     try {
-      const { userId } = req.params;
+      const { _id } = req.user;
       const data = await this.model
-        .find({ userId })
+        .find({ userId: _id })
         .populate('questions')
         .lean();
       return Response(res, { data });
