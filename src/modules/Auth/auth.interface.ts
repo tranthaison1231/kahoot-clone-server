@@ -7,8 +7,5 @@ interface Register {
   password: string;
   confirmPassword: string;
 }
-interface User {
-  username: string;
-  password: string;
-}
-export { Login, Register, User };
+
+export { Login, Register };
