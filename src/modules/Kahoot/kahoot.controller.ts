@@ -3,6 +3,7 @@ import KahootModel from './kahoot.model';
 import requireAuth from '@/middlewares/auth.middleware';
 import status from 'http-status';
 import { Response, CrudController, Controller } from '@shyn123/express-rest';
+import { RequestWithUser } from '@/middlewares/auth.middleware';
 class KahootController extends CrudController implements Controller {
   public path = '/kahoots';
   model = KahootModel;
@@ -18,6 +19,18 @@ class KahootController extends CrudController implements Controller {
     this.router.put(`${this.path}/:id`, requireAuth, this.update);
     this.router.get(`${this.path}/:id`, requireAuth, this.getById);
     this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
+  };
+  getAll = async (req: RequestWithUser, res: express.Response) => {
+    try {
+      const { _id } = req.user;
+      const data = await this.model
+        .find({ userId: _id })
+        .populate('questions')
+        .lean();
+      return Response(res, { data });
+    } catch (error) {
+      return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+    }
   };
   getById = async (req: express.Request, res: express.Response) => {
     try {

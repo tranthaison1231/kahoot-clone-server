@@ -5,11 +5,12 @@ info:
   license:
     name: MIT
 servers:
-  - url: localhost:3001/docs
+  - url: http://localhost:3000/
 security:
   - BearerAuth: []
 components:
   securitySchemes:
     BearerAuth:
-      type: http
-      scheme: bearer
+      type: apiKey
+      in: header
+      name: x-access-token

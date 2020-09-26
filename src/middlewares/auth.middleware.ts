@@ -1,20 +1,16 @@
-import express from 'express';
 import status from 'http-status';
 import * as jwt from 'jsonwebtoken';
 import { Response } from '@shyn123/express-rest';
+import express from 'express';
+import UserModel from '@/modules/Auth/user.model';
+import { UserTransform } from '@/modules/Auth/user.model';
 
-interface tokenPayload {
-  username: string;
-  userId: string;
-  exp: number;
-  iat: number;
-}
-interface CustomRequest extends express.Request {
-  tokenPayload: tokenPayload;
+export interface RequestWithUser extends express.Request {
+  user: UserTransform;
 }
 
 const requireAuth = async (
-  req: CustomRequest,
+  req: RequestWithUser,
   res: express.Response,
   next: express.NextFunction
 ) => {
@@ -27,7 +23,8 @@ const requireAuth = async (
     if (payload.exp < Date.now()) {
       return Response(res, { message: 'Token expired' }, status.UNAUTHORIZED);
     }
-    req.tokenPayload = payload;
+    const user = await UserModel.findById(payload.userId);
+    req.user = user.transform();
     next();
   } catch (e) {
     return Response(res, { message: 'Invalid token' }, status.UNAUTHORIZED);

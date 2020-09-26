@@ -7,7 +7,7 @@ import AuthController from '@/modules/Auth/auth.controller';
 import RoomController from '@/modules/Room/room.controller';
 import KahootController from '@/modules/Kahoot/kahoot.controller';
 import QuestionController from '@/modules/Question/question.controller';
-import Swagger from '@/docs/swagger';
+import Swagger from '@/docs/config';
 const MDW = [cors(), morgan('dev')];
 
 const app = new Express({

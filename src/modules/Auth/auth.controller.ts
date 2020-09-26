@@ -29,7 +29,7 @@ class AuthController implements Controller {
       return Response(
         res,
         { message: 'User name does not exist' },
-        status.FORBIDDEN
+        status.UNAUTHORIZED
       );
     }
     const isPasswordCorrect = await bcrypt.compare(
@@ -37,7 +37,7 @@ class AuthController implements Controller {
       user.password
     );
     if (!isPasswordCorrect) {
-      return Response(res, { message: 'Wrong password' }, status.FORBIDDEN);
+      return Response(res, { message: 'Wrong password' }, status.UNAUTHORIZED);
     }
     const payload = {
       username,
@@ -60,14 +60,14 @@ class AuthController implements Controller {
       return Response(
         res,
         { message: 'Username has been used' },
-        status.CONFLICT
+        status.UNAUTHORIZED
       );
     }
     if (password !== confirmPassword) {
       return Response(
         res,
         { message: 'Password not matched' },
-        status.CONFLICT
+        status.UNAUTHORIZED
       );
     }
     const hashPassword = await bcrypt.hash(password, this.salt);
