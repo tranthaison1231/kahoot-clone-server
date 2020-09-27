@@ -15,14 +15,17 @@ const app = new Express({
   databaseConfigs: [
     {
       database: MongoDB,
-      url: process.env.MONGO_URL
-    }
+      url:
+        process.env.NODE_ENV === 'test'
+          ? process.env.MOGO_TEST_URL
+          : process.env.MONGO_URL,
+    },
   ],
   controllers: [
     new AuthController(),
     new KahootController(),
-    new QuestionController()
-  ]
+    new QuestionController(),
+  ],
 });
 
 const server = app.listen();

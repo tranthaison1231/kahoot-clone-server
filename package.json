@@ -8,7 +8,8 @@
     "dev": "tsc --watch & nodemon --exec ts-node ./src/server.ts",
     "start": "node ./dist/server.js",
     "start:prod": "NODE_ENV=production node ./dist/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:integrate": "NODE_ENV=test jest --testTimeout=20000 --verbose --detectOpenHandles --forceExit src/modules/__tests__/"
   },
   "author": "",
   "license": "ISC",
