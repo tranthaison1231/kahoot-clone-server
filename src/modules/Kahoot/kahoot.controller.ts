@@ -32,10 +32,14 @@ class KahootController extends CrudController implements Controller {
       return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }
   };
-  getById = async (req: express.Request, res: express.Response) => {
+  getById = async (req: RequestWithUser, res: express.Response) => {
     try {
+      const { _id } = req.user;
       const { id } = req.params;
-      const data = await this.model.findById(id).populate('questions').lean();
+      const data = await this.model
+        .findOne({ _id: id, userId: _id })
+        .populate('questions')
+        .lean();
       if (!data) {
         return Response(
           res,
@@ -46,6 +50,41 @@ class KahootController extends CrudController implements Controller {
         );
       }
       return Response(res, { data });
+    } catch (error) {
+      return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+    }
+  };
+  create = async (req: RequestWithUser, res: express.Response) => {
+    try {
+      const { _id } = req.user;
+      const data = new this.model({ ...req.body, userId: _id });
+      await data.save();
+      return Response(
+        res,
+        { message: 'Create completed', data },
+        status.CREATED
+      );
+    } catch (error) {
+      return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+    }
+  };
+  update = async (req: RequestWithUser, res: express.Response) => {
+    try {
+      const { _id } = req.user;
+      const { id } = req.params;
+      const data = await this.model
+        .findOneAndUpdate(
+          { _id: id, userId: _id },
+          {
+            $set: { ...req.body, userId: _id }
+          },
+          { new: true }
+        )
+        .lean();
+      if (!data) {
+        return Response(res, { message: `${id} not found` }, status.NOT_FOUND);
+      }
+      return Response(res, { message: 'Edit completed', data }, status.OK);
     } catch (error) {
       return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }
