@@ -6,6 +6,7 @@ import { Login, Register } from './auth.interface';
 import UserModel from './user.model';
 import { Response, Controller } from '@shyn123/express-rest';
 import { EXPIRED_TIME } from '@/constant';
+import { loginValidate, registerValidate } from './auth.validate';
 
 class AuthController implements Controller {
   public path = '/auth';
@@ -18,8 +19,8 @@ class AuthController implements Controller {
   }
 
   public initializeRoutes = () => {
-    this.router.post(`${this.path}/login`, this.login);
-    this.router.post(`${this.path}/register`, this.register);
+    this.router.post(`${this.path}/login`, loginValidate, this.login);
+    this.router.post(`${this.path}/register`, registerValidate, this.register);
   };
 
   private login = async (req: express.Request, res: express.Response) => {

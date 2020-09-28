@@ -5,7 +5,7 @@
   "main": "server.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch & nodemon --exec ts-node ./dist/server.js",
+    "dev": "tsc  & nodemon --exec ts-node ./dist/server.js",
     "start": "node ./dist/server.js",
     "start:prod": "NODE_ENV=production node ./dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -22,6 +22,7 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "fastest-validator": "^1.7.0",
     "http-status": "^1.4.2",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
