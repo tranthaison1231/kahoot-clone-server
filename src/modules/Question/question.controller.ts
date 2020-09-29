@@ -15,8 +15,8 @@ class QuestionController extends CrudController implements Controller {
   }
 
   public initializeRoutes = () => {
-    this.router.post(this.path, validate, requireAuth, this.create);
-    this.router.put(`${this.path}/:id`, validate, requireAuth, this.update);
+    this.router.post(this.path, requireAuth, validate, this.create);
+    this.router.put(`${this.path}/:id`, requireAuth, validate, this.update);
     this.router.get(`${this.path}/:id`, requireAuth, this.getById);
     this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
   };
@@ -25,11 +25,14 @@ class QuestionController extends CrudController implements Controller {
       const { kahootId } = req.params;
       const data = new this.model(req.body);
       data.save();
-      await this.kahoot.findOneAndUpdate(
-        { _id: kahootId },
-        { $push: { questions: data._id } },
-        { new: true }
-      );
+      await this.kahoot
+        .findOneAndUpdate(
+          { _id: kahootId },
+          { $push: { questions: data._id } },
+          { new: true }
+        )
+        .populate('questions')
+        .lean();
       return Response(
         res,
         { message: 'Create completed', data },
