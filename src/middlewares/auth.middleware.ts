@@ -1,9 +1,9 @@
+import jwt from 'jsonwebtoken';
 import status from 'http-status';
-import * as jwt from 'jsonwebtoken';
-import { Response as HttpResponse } from '@shyn123/express-rest';
-import { Request, Response, NextFunction } from 'express';
 import UserModel from '@/modules/Auth/user.model';
 import { UserTransform } from '@/modules/Auth/user.model';
+import { Request, Response, NextFunction } from 'express';
+import { Response as HttpResponse } from '@shyn123/express-rest';
 
 export interface RequestWithUser extends Request {
   user: UserTransform;

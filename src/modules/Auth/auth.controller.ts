@@ -1,13 +1,13 @@
-import express, { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import status from 'http-status';
-import { Login, Register } from './auth.interface';
 import UserModel from './user.model';
-import { Response as HttpResponse, Controller } from '@shyn123/express-rest';
 import { EXPIRED_TIME } from '@/constant';
-import { loginSchema, registerSchema } from './auth.validate';
+import { Login, Register } from './auth.interface';
+import express, { Request, Response } from 'express';
 import validate from '@/middlewares/validate.middleware';
+import { loginSchema, registerSchema } from './auth.validate';
+import { Response as HttpResponse, Controller } from '@shyn123/express-rest';
 
 class AuthController implements Controller {
   public path = '/auth';

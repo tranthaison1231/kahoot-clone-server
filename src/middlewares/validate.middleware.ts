@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import status from 'http-status';
-import { Response as HttpResponse } from '@shyn123/express-rest';
 import { Schema } from 'joi';
+import status from 'http-status';
+import { Request, Response, NextFunction } from 'express';
+import { Response as HttpResponse } from '@shyn123/express-rest';
 
 const validate = (schema: Schema) => async (
   req: Request,

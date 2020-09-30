@@ -1,11 +1,15 @@
-import * as express from 'express';
-import KahootModel from './kahoot.model';
-import requireAuth from '@/middlewares/auth.middleware';
+import {
+  Controller,
+  CrudController,
+  Response as HttpResponse
+} from '@shyn123/express-rest';
+import { Response } from 'express';
 import status from 'http-status';
-import { Response, CrudController, Controller } from '@shyn123/express-rest';
-import { RequestWithUser } from '@/middlewares/auth.middleware';
+import KahootModel from './kahoot.model';
 import validate from '@/middlewares/validate.middleware';
 import { createSchema, updateSchema } from './kahoot.validate';
+import requireAuth, { RequestWithUser } from '@/middlewares/auth.middleware';
+
 class KahootController extends CrudController implements Controller {
   public path = '/kahoots';
   model = KahootModel;
@@ -32,19 +36,19 @@ class KahootController extends CrudController implements Controller {
     this.router.get(`${this.path}/:id`, requireAuth, this.getById);
     this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
   };
-  getAll = async (req: RequestWithUser, res: express.Response) => {
+  getAll = async (req: RequestWithUser, res: Response) => {
     try {
       const { _id } = req.user;
       const data = await this.model
         .find({ userId: _id })
         .populate('questions')
         .lean();
-      return Response(res, { data });
+      return HttpResponse(res, { data });
     } catch (error) {
-      return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+      return HttpResponse(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }
   };
-  getById = async (req: RequestWithUser, res: express.Response) => {
+  getById = async (req: RequestWithUser, res: Response) => {
     try {
       const { _id } = req.user;
       const { id } = req.params;
@@ -53,7 +57,7 @@ class KahootController extends CrudController implements Controller {
         .populate('questions')
         .lean();
       if (!data) {
-        return Response(
+        return HttpResponse(
           res,
           {
             message: `${id} not found`
@@ -61,26 +65,26 @@ class KahootController extends CrudController implements Controller {
           status.NOT_FOUND
         );
       }
-      return Response(res, { data });
+      return HttpResponse(res, { data });
     } catch (error) {
-      return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+      return HttpResponse(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }
   };
-  create = async (req: RequestWithUser, res: express.Response) => {
+  create = async (req: RequestWithUser, res: Response) => {
     try {
       const { _id } = req.user;
       const data = new this.model({ ...req.body, userId: _id });
       await data.save();
-      return Response(
+      return HttpResponse(
         res,
         { message: 'Create completed', data },
         status.CREATED
       );
     } catch (error) {
-      return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+      return HttpResponse(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }
   };
-  update = async (req: RequestWithUser, res: express.Response) => {
+  update = async (req: RequestWithUser, res: Response) => {
     try {
       const { _id } = req.user;
       const { id } = req.params;
@@ -95,11 +99,15 @@ class KahootController extends CrudController implements Controller {
         .populate('questions')
         .lean();
       if (!data) {
-        return Response(res, { message: `${id} not found` }, status.NOT_FOUND);
+        return HttpResponse(
+          res,
+          { message: `${id} not found` },
+          status.NOT_FOUND
+        );
       }
-      return Response(res, { message: 'Edit completed', data }, status.OK);
+      return HttpResponse(res, { message: 'Edit completed', data }, status.OK);
     } catch (error) {
-      return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+      return HttpResponse(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }
   };
 }

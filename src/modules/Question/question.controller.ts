@@ -1,11 +1,16 @@
+import {
+  Controller,
+  CrudController,
+  Response as HttpRespone
+} from '@shyn123/express-rest';
 import status from 'http-status';
-import * as express from 'express';
+import { Request, Response } from 'express';
 import QuestionModel from './question.model';
-import KahootModel from '@/modules/Kahoot/kahoot.model';
-import { Response, CrudController, Controller } from '@shyn123/express-rest';
-import requireAuth from '@/middlewares/auth.middleware';
-import validate from '@/middlewares/validate.middleware';
 import { schema } from './question.validate';
+import requireAuth from '@/middlewares/auth.middleware';
+import KahootModel from '@/modules/Kahoot/kahoot.model';
+import validate from '@/middlewares/validate.middleware';
+
 class QuestionController extends CrudController implements Controller {
   public path = '/kahoots/:kahootId/questions';
   model = QuestionModel;
@@ -26,7 +31,7 @@ class QuestionController extends CrudController implements Controller {
     this.router.get(`${this.path}/:id`, requireAuth, this.getById);
     this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
   };
-  create = async (req: express.Request, res: express.Response) => {
+  create = async (req: Request, res: Response) => {
     try {
       const { kahootId } = req.params;
       const data = new this.model(req.body);
@@ -39,13 +44,13 @@ class QuestionController extends CrudController implements Controller {
         )
         .populate('questions')
         .lean();
-      return Response(
+      return HttpRespone(
         res,
         { message: 'Create completed', data },
         status.CREATED
       );
     } catch (error) {
-      return Response(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+      return HttpRespone(res, { error: error }, status.INTERNAL_SERVER_ERROR);
     }
   };
 }
