@@ -1,17 +1,9 @@
-import validate from '@/middlewares/validate.middleware';
-import express, { NextFunction } from 'express';
-import { ValidationSchema } from 'fastest-validator';
+import Joi, { Schema } from 'joi';
 
-const kahootValidate = async (
-  req: express.Request,
-  res: express.Response,
-  next: NextFunction
-) => {
-  const schema: ValidationSchema = {
-    $$strict: true,
-    title: 'string'
-  };
-  validate({ req, res, next, schema });
-};
-
-export default kahootValidate;
+export const createSchema: Schema = Joi.object({
+  title: Joi.string().required()
+});
+export const updateSchema: Schema = Joi.object({
+  title: Joi.string().required(),
+  questions: Joi.array().required()
+});

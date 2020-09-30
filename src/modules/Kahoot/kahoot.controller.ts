@@ -4,7 +4,8 @@ import requireAuth from '@/middlewares/auth.middleware';
 import status from 'http-status';
 import { Response, CrudController, Controller } from '@shyn123/express-rest';
 import { RequestWithUser } from '@/middlewares/auth.middleware';
-import validate from './kahoot.validate';
+import validate from '@/middlewares/validate.middleware';
+import { createSchema, updateSchema } from './kahoot.validate';
 class KahootController extends CrudController implements Controller {
   public path = '/kahoots';
   model = KahootModel;
@@ -15,9 +16,19 @@ class KahootController extends CrudController implements Controller {
   }
 
   initializeRoutes = () => {
-    this.router.post(this.path, requireAuth, validate, this.create);
+    this.router.post(
+      this.path,
+      requireAuth,
+      validate(createSchema),
+      this.create
+    );
     this.router.get(this.path, requireAuth, this.getAll);
-    this.router.put(`${this.path}/:id`, requireAuth, validate, this.update);
+    this.router.put(
+      `${this.path}/:id`,
+      requireAuth,
+      validate(updateSchema),
+      this.update
+    );
     this.router.get(`${this.path}/:id`, requireAuth, this.getById);
     this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
   };

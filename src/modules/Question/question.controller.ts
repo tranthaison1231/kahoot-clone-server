@@ -4,7 +4,8 @@ import QuestionModel from './question.model';
 import KahootModel from '@/modules/Kahoot/kahoot.model';
 import { Response, CrudController, Controller } from '@shyn123/express-rest';
 import requireAuth from '@/middlewares/auth.middleware';
-import validate from './question.validate';
+import validate from '@/middlewares/validate.middleware';
+import { schema } from './question.validate';
 class QuestionController extends CrudController implements Controller {
   public path = '/kahoots/:kahootId/questions';
   model = QuestionModel;
@@ -15,8 +16,13 @@ class QuestionController extends CrudController implements Controller {
   }
 
   public initializeRoutes = () => {
-    this.router.post(this.path, requireAuth, validate, this.create);
-    this.router.put(`${this.path}/:id`, requireAuth, validate, this.update);
+    this.router.post(this.path, requireAuth, validate(schema), this.create);
+    this.router.put(
+      `${this.path}/:id`,
+      requireAuth,
+      validate(schema),
+      this.update
+    );
     this.router.get(`${this.path}/:id`, requireAuth, this.getById);
     this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
   };

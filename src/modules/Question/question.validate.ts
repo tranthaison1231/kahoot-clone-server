@@ -1,29 +1,18 @@
-import validate from '@/middlewares/validate.middleware';
-import express from 'express';
+import Joi, { Schema } from 'joi';
 
-const questionValidate = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-) => {
-  const schema = {
-    $$strict: true,
-    content: 'string',
-    image: 'string',
-    timeLimit: 'number',
-    points: 'number',
-    isSingleSelect: 'boolean',
-    answers: {
-      type: 'object',
-      props: {
-        A: 'string',
-        B: 'string',
-        C: 'string',
-        D: 'string'
-      }
-    },
-    correctAnswer: 'string'
-  };
-  validate({ req, res, next, schema });
-};
-export default questionValidate;
+export const schema: Schema = Joi.object({
+  content: Joi.string().required(),
+  image: Joi.string().required(),
+  timeLimit: Joi.number().required(),
+  points: Joi.number().required(),
+  isSingleSelect: Joi.boolean().required(),
+  answers: Joi.object()
+    .keys({
+      A: Joi.alternatives().try(Joi.number(), Joi.string()).required(),
+      B: Joi.alternatives().try(Joi.number(), Joi.string()).required(),
+      C: Joi.alternatives().try(Joi.number(), Joi.string()).required(),
+      D: Joi.alternatives().try(Joi.number(), Joi.string()).required()
+    })
+    .required(),
+  correctAnswer: Joi.string().required()
+});

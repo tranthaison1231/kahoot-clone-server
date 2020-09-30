@@ -1,37 +1,28 @@
-import express from 'express';
+import { Request, Response, NextFunction } from 'express';
 import status from 'http-status';
-import { Response } from '@shyn123/express-rest';
-import Validator, {
-  ValidationError,
-  ValidationSchema
-} from 'fastest-validator';
+import { Response as HttpResponse } from '@shyn123/express-rest';
+import { Schema } from 'joi';
 
-const v = new Validator();
-
-interface ValidateInput {
-  req: express.Request;
-  res: express.Response;
-  next: express.NextFunction;
-  schema: ValidationSchema;
-}
-
-const validate = async (input: ValidateInput) => {
-  const { req, res, next, schema } = input;
+const validate = (schema: Schema) => async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const isValid: true | ValidationError[] = v.validate(
-      { ...req.body },
-      schema
-    );
-    if (isValid === true) {
-      return next();
+    const value = schema.validate({ ...req.body }, { abortEarly: false });
+    console.log(value);
+    if (value.error) {
+      const error = value.error.details.reduce((result: any, err) => {
+        const key = err.path[0];
+        result[key] = err.message.replace(/[""]/g, '');
+        return result;
+      }, {});
+      return HttpResponse(res, { error }, status.BAD_REQUEST);
     }
-    return Response(res, { message: isValid[0].message }, status.BAD_REQUEST);
-  } catch (error) {
-    return Response(
-      res,
-      { error: error.message },
-      status.INTERNAL_SERVER_ERROR
-    );
+    next();
+  } catch (err) {
+    console.log('err', err);
   }
 };
+
 export default validate;

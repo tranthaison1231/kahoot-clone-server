@@ -1,12 +1,13 @@
-import * as express from 'express';
-import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
+import express, { Request, Response, NextFunction } from 'express';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import status from 'http-status';
 import { Login, Register } from './auth.interface';
 import UserModel from './user.model';
-import { Response, Controller } from '@shyn123/express-rest';
+import { Response as HttpResponse, Controller } from '@shyn123/express-rest';
 import { EXPIRED_TIME } from '@/constant';
-import { loginValidate, registerValidate } from './auth.validate';
+import { loginSchema, registerSchema } from './auth.validate';
+import validate from '@/middlewares/validate.middleware';
 
 class AuthController implements Controller {
   public path = '/auth';
@@ -19,15 +20,19 @@ class AuthController implements Controller {
   }
 
   public initializeRoutes = () => {
-    this.router.post(`${this.path}/login`, loginValidate, this.login);
-    this.router.post(`${this.path}/register`, registerValidate, this.register);
+    this.router.post(`${this.path}/login`, validate(loginSchema), this.login);
+    this.router.post(
+      `${this.path}/register`,
+      validate(registerSchema),
+      this.register
+    );
   };
 
-  private login = async (req: express.Request, res: express.Response) => {
+  private login = async (req: Request, res: Response) => {
     const { username, password }: Login = req.body;
     const user = await this.user.findOne({ username });
     if (!user) {
-      return Response(
+      return HttpResponse(
         res,
         { message: 'User name does not exist' },
         status.FORBIDDEN
@@ -38,7 +43,7 @@ class AuthController implements Controller {
       user.password
     );
     if (!isPasswordCorrect) {
-      return Response(res, { message: 'Wrong password' }, status.FORBIDDEN);
+      return HttpResponse(res, { message: 'Wrong password' }, status.FORBIDDEN);
     }
     const payload = {
       username,
@@ -46,26 +51,26 @@ class AuthController implements Controller {
       exp: Date.now() + EXPIRED_TIME
     };
     const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
-    return Response(
+    return HttpResponse(
       res,
       { message: 'Login completed', accessToken },
       status.OK
     );
   };
 
-  private register = async (req: express.Request, res: express.Response) => {
+  private register = async (req: Request, res: Response) => {
     const { username, password, confirmPassword }: Register = req.body;
 
     const user = await this.user.findOne({ username });
     if (user) {
-      return Response(
+      return HttpResponse(
         res,
         { message: 'Username has been used' },
         status.CONFLICT
       );
     }
     if (password !== confirmPassword) {
-      return Response(
+      return HttpResponse(
         res,
         { message: 'Password not matched' },
         status.CONFLICT
@@ -83,7 +88,7 @@ class AuthController implements Controller {
       exp: Date.now() + EXPIRED_TIME
     };
     const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
-    return Response(
+    return HttpResponse(
       res,
       { message: 'Register completed', accessToken },
       status.CREATED
