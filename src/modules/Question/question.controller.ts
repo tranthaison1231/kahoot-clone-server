@@ -46,7 +46,7 @@ class QuestionController extends CrudController implements Controller {
       const data = await this.model.find().lean();
       return HttpRespone(res, { data });
     } catch (error) {
-      return HttpRespone(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+      return HttpRespone(res, { error }, status.INTERNAL_SERVER_ERROR);
     }
   };
 
@@ -69,7 +69,7 @@ class QuestionController extends CrudController implements Controller {
         status.CREATED
       );
     } catch (error) {
-      return HttpRespone(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+      return HttpRespone(res, { error }, status.INTERNAL_SERVER_ERROR);
     }
   };
 }
