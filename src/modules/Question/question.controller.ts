@@ -21,6 +21,7 @@ class QuestionController extends CrudController implements Controller {
   }
 
   public initializeRoutes = () => {
+    this.router.get(this.path, requireAuth, this.getAll);
     this.router.post(this.path, requireAuth, validate(schema), this.create);
     this.router.put(
       `${this.path}/:id`,
@@ -31,6 +32,24 @@ class QuestionController extends CrudController implements Controller {
     this.router.get(`${this.path}/:id`, requireAuth, this.getById);
     this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
   };
+  getAll = async (req: Request, res: Response) => {
+    try {
+      const { kahootId } = req.params;
+      const kahoot = await this.kahoot.findById(kahootId);
+      if (!kahoot) {
+        return HttpRespone(
+          res,
+          { message: `${kahootId} not found` },
+          status.NOT_FOUND
+        );
+      }
+      const data = await this.model.find().lean();
+      return HttpRespone(res, { data });
+    } catch (error) {
+      return HttpRespone(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+    }
+  };
+
   create = async (req: Request, res: Response) => {
     try {
       const { kahootId } = req.params;

@@ -39,10 +39,7 @@ class KahootController extends CrudController implements Controller {
   getAll = async (req: RequestWithUser, res: Response) => {
     try {
       const { _id } = req.user;
-      const data = await this.model
-        .find({ userId: _id })
-        .populate('questions')
-        .lean();
+      const data = await this.model.find({ userId: _id }).lean();
       return HttpResponse(res, { data });
     } catch (error) {
       return HttpResponse(res, { error: error }, status.INTERNAL_SERVER_ERROR);
@@ -52,10 +49,7 @@ class KahootController extends CrudController implements Controller {
     try {
       const { _id } = req.user;
       const { id } = req.params;
-      const data = await this.model
-        .findOne({ _id: id, userId: _id })
-        .populate('questions')
-        .lean();
+      const data = await this.model.findOne({ _id: id, userId: _id }).lean();
       if (!data) {
         return HttpResponse(
           res,
@@ -96,7 +90,6 @@ class KahootController extends CrudController implements Controller {
           },
           { new: true }
         )
-        .populate('questions')
         .lean();
       if (!data) {
         return HttpResponse(
