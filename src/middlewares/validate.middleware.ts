@@ -15,12 +15,9 @@ const validate = (schema: Schema) => async (
   try {
     const value = schema.validate({ ...req.body }, { abortEarly: false });
     if (value.error) {
-      console.log(value.error);
-      const error = value.error.details.reduce((result: Error, err) => {
-        const key = err.path[0];
-        result[key] = err.message.replace(/[""]/g, '');
-        return result;
-      }, {});
+      const error = value.error.details.map((err) => {
+        return err.message.replace(/[""]/g, '');
+      });
       return HttpResponse(res, { error }, status.BAD_REQUEST);
     }
     next();
