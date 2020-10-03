@@ -1,11 +1,7 @@
-import { Schema, string } from 'joi';
+import { Schema } from 'joi';
 import status from 'http-status';
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { Response as HttpResponse } from '@shyn123/express-rest';
-
-interface Error {
-  [key: string]: string;
-}
 
 const validate = (schema: Schema) => async (
   req: Request,

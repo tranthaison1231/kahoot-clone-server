@@ -58,7 +58,7 @@ class AuthController implements Controller {
     return HttpResponse(
       res,
       { message: 'Login completed', accessToken },
-      status.OK
+      status.CREATED
     );
   };
 
@@ -95,7 +95,7 @@ class AuthController implements Controller {
     return HttpResponse(
       res,
       { message: 'Register completed', accessToken },
-      status.OK
+      status.CREATED
     );
   };
 }
