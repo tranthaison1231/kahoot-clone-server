@@ -13,7 +13,7 @@ const validate = (schema: Schema) => async (
   next: NextFunction
 ) => {
   try {
-    const value = schema.validate({ ...req.body }, { abortEarly: false });
+    const value = schema.validate({ ...req.body });
     if (value.error) {
       const error = value.error.details.map((err) => {
         return err.message.replace(/[""]/g, '');
