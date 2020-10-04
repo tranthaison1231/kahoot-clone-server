@@ -6,13 +6,11 @@ export const schema: Schema = Joi.object({
   timeLimit: Joi.number(),
   points: Joi.number(),
   isSingleSelect: Joi.boolean(),
-  answers: Joi.object()
-    .keys({
-      A: Joi.alternatives().try(Joi.number(), Joi.string()),
-      B: Joi.alternatives().try(Joi.number(), Joi.string()),
-      C: Joi.alternatives().try(Joi.number(), Joi.string()),
-      D: Joi.alternatives().try(Joi.number(), Joi.string())
-    })
-    .required(),
+  answers: Joi.object().keys({
+    A: Joi.alternatives().try(Joi.number(), Joi.string()),
+    B: Joi.alternatives().try(Joi.number(), Joi.string()),
+    C: Joi.alternatives().try(Joi.number(), Joi.string()),
+    D: Joi.alternatives().try(Joi.number(), Joi.string())
+  }),
   correctAnswer: Joi.string()
 });
