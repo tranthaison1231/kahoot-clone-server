@@ -1,11 +1,7 @@
-import { Schema, string } from 'joi';
+import { Schema } from 'joi';
 import status from 'http-status';
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { Response as HttpResponse } from '@shyn123/express-rest';
-
-interface Error {
-  [key: string]: string;
-}
 
 const validate = (schema: Schema) => async (
   req: Request,
@@ -13,14 +9,11 @@ const validate = (schema: Schema) => async (
   next: NextFunction
 ) => {
   try {
-    const value = schema.validate({ ...req.body }, { abortEarly: false });
+    const value = schema.validate({ ...req.body });
     if (value.error) {
-      console.log(value.error);
-      const error = value.error.details.reduce((result: Error, err) => {
-        const key = err.path[0];
-        result[key] = err.message.replace(/[""]/g, '');
-        return result;
-      }, {});
+      const error = value.error.details.map((err) => {
+        return err.message.replace(/[""]/g, '');
+      });
       return HttpResponse(res, { error }, status.BAD_REQUEST);
     }
     next();

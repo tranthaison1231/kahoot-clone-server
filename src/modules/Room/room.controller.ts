@@ -74,7 +74,7 @@ class RoomController implements Controller {
         return HttpResponse(
           res,
           { message: `This room is ${room.status}` },
-          status.FORBIDDEN
+          status.UNAUTHORIZED
         );
       }
       const newPlayer = new this.player({ username });
