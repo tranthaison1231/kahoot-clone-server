@@ -13,6 +13,7 @@ import validate from '@/middlewares/validate.middleware';
 import cloudinary from 'cloudinary';
 import multer from 'multer';
 import fs from 'fs';
+import { isImage } from '@/utils';
 
 const upload = multer({ dest: '../../uploads/' });
 cloudinary.v2.config({
@@ -76,10 +77,10 @@ class QuestionController extends CrudController implements Controller {
   };
   upload = async (req: Request, res: Response) => {
     try {
-      if (!req.file) {
+      if (!req.file || !isImage(req.file)) {
         return HttpResponse(
           res,
-          { message: 'Image notfound' },
+          { message: 'Image not found' },
           status.NOT_FOUND
         );
       }
