@@ -16,9 +16,9 @@ import fs from 'fs';
 
 const upload = multer({ dest: '../../uploads/' });
 cloudinary.v2.config({
-  cloud_name: 'quangtien',
-  api_key: '522183711827974',
-  api_secret: 'ECRIZHvQWTtGggILa5j46MzQpi0'
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_KEY,
+  api_secret: process.env.CLOUD_SECRET
 });
 
 class QuestionController extends CrudController implements Controller {
@@ -67,7 +67,11 @@ class QuestionController extends CrudController implements Controller {
         status.CREATED
       );
     } catch (error) {
-      return HttpResponse(res, { error: error.message }, status.INTERNAL_SERVER_ERROR);
+      return HttpResponse(
+        res,
+        { error: error.message },
+        status.INTERNAL_SERVER_ERROR
+      );
     }
   };
   upload = async (req: Request, res: Response) => {
