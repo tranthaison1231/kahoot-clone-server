@@ -1,7 +1,7 @@
 import {
   Controller,
   CrudController,
-  Response as HttpRespone
+  Response as HttpResponse
 } from '@shyn123/express-rest';
 import status from 'http-status';
 import { Request, Response } from 'express';
@@ -10,6 +10,16 @@ import { schema } from './question.validate';
 import requireAuth from '@/middlewares/auth.middleware';
 import KahootModel from '@/modules/Kahoot/kahoot.model';
 import validate from '@/middlewares/validate.middleware';
+import cloudinary from 'cloudinary';
+import multer from 'multer';
+import fs from 'fs';
+
+const upload = multer({ dest: '../../uploads/' });
+cloudinary.v2.config({
+  cloud_name: 'quangtien',
+  api_key: '522183711827974',
+  api_secret: 'ECRIZHvQWTtGggILa5j46MzQpi0'
+});
 
 class QuestionController extends CrudController implements Controller {
   public path = '/kahoots/:kahootId/questions';
@@ -28,6 +38,12 @@ class QuestionController extends CrudController implements Controller {
       validate(schema),
       this.update
     );
+    this.router.post(
+      '/image',
+      requireAuth,
+      upload.single('image'),
+      this.upload
+    );
     this.router.get(`${this.path}/:id`, requireAuth, this.getById);
     this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
   };
@@ -45,13 +61,42 @@ class QuestionController extends CrudController implements Controller {
         )
         .populate('questions')
         .lean();
-      return HttpRespone(
+      return HttpResponse(
         res,
         { message: 'Create completed', data },
         status.CREATED
       );
     } catch (error) {
-      return HttpRespone(res, { error }, status.INTERNAL_SERVER_ERROR);
+      return HttpResponse(res, { error }, status.INTERNAL_SERVER_ERROR);
+    }
+  };
+  upload = async (req: Request, res: Response) => {
+    try {
+      if (!req.file) {
+        return HttpResponse(
+          res,
+          { message: 'Image notfound' },
+          status.NOT_FOUND
+        );
+      }
+      const image = await cloudinary.v2.uploader.upload(
+        req.file.path,
+        (err, result) => {
+          fs.unlinkSync(req.file.path);
+          return result;
+        }
+      );
+      return HttpResponse(
+        res,
+        { message: 'Upload completed', url: image.url },
+        status.OK
+      );
+    } catch (error) {
+      return HttpResponse(
+        res,
+        { error: error.message },
+        status.INTERNAL_SERVER_ERROR
+      );
     }
   };
 }
