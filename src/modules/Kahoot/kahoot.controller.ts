@@ -45,7 +45,11 @@ class KahootController extends CrudController implements Controller {
         .lean();
       return HttpResponse(res, { data });
     } catch (error) {
-      return HttpResponse(res, { error }, status.INTERNAL_SERVER_ERROR);
+      return HttpResponse(
+        res,
+        { error: error.message },
+        status.INTERNAL_SERVER_ERROR
+      );
     }
   };
   getById = async (req: RequestWithUser, res: Response) => {
@@ -67,7 +71,11 @@ class KahootController extends CrudController implements Controller {
       }
       return HttpResponse(res, { data });
     } catch (error) {
-      return HttpResponse(res, { error }, status.INTERNAL_SERVER_ERROR);
+      return HttpResponse(
+        res,
+        { error: error.message },
+        status.INTERNAL_SERVER_ERROR
+      );
     }
   };
   create = async (req: RequestWithUser, res: Response) => {
@@ -81,7 +89,11 @@ class KahootController extends CrudController implements Controller {
         status.CREATED
       );
     } catch (error) {
-      return HttpResponse(res, { error }, status.INTERNAL_SERVER_ERROR);
+      return HttpResponse(
+        res,
+        { error: error.message },
+        status.INTERNAL_SERVER_ERROR
+      );
     }
   };
   update = async (req: RequestWithUser, res: Response) => {
@@ -107,7 +119,11 @@ class KahootController extends CrudController implements Controller {
       }
       return HttpResponse(res, { message: 'Edit completed', data }, status.OK);
     } catch (error) {
-      return HttpResponse(res, { error }, status.INTERNAL_SERVER_ERROR);
+      return HttpResponse(
+        res,
+        { error: error.message },
+        status.INTERNAL_SERVER_ERROR
+      );
     }
   };
 }

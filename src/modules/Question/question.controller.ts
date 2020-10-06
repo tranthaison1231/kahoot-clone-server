@@ -67,7 +67,7 @@ class QuestionController extends CrudController implements Controller {
         status.CREATED
       );
     } catch (error) {
-      return HttpResponse(res, { error }, status.INTERNAL_SERVER_ERROR);
+      return HttpResponse(res, { error: error.message }, status.INTERNAL_SERVER_ERROR);
     }
   };
   upload = async (req: Request, res: Response) => {
