@@ -10,18 +10,9 @@ import { schema } from './question.validate';
 import requireAuth from '@/middlewares/auth.middleware';
 import KahootModel from '@/modules/Kahoot/kahoot.model';
 import validate from '@/middlewares/validate.middleware';
-import cloudinary from 'cloudinary';
-import multer from 'multer';
-import fs from 'fs';
 import { isImage } from '@/utils';
-
-const upload = multer({ dest: '../../uploads/' });
-cloudinary.v2.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUD_KEY,
-  api_secret: process.env.CLOUD_SECRET
-});
-
+import { multerUploads, dataUri } from '@/middlewares/upload.middleware';
+import { upload } from '@/utils/uploadImage';
 class QuestionController extends CrudController implements Controller {
   public path = '/kahoots/:kahootId/questions';
   model = QuestionModel;
@@ -39,12 +30,7 @@ class QuestionController extends CrudController implements Controller {
       validate(schema),
       this.update
     );
-    this.router.post(
-      '/image',
-      requireAuth,
-      upload.single('image'),
-      this.upload
-    );
+    this.router.post('/image', requireAuth, multerUploads, this.upload);
     this.router.get(`${this.path}/:id`, requireAuth, this.getById);
     this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
   };
@@ -84,13 +70,8 @@ class QuestionController extends CrudController implements Controller {
           status.NOT_FOUND
         );
       }
-      const image = await cloudinary.v2.uploader.upload(
-        req.file.path,
-        (err, result) => {
-          fs.unlinkSync(req.file.path);
-          return result;
-        }
-      );
+      const file = dataUri(req).content;
+      const image = await upload(file);
       return HttpResponse(
         res,
         { message: 'Upload completed', url: image.url },
