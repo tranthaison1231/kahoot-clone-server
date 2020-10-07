@@ -5,5 +5,7 @@ export const IMAGE_TYPE: string[] = [
   'svg',
   'PNG',
   'JPEG',
-  'SVG'
+  'SVG',
+  'jpg',
+  'JPG'
 ];
