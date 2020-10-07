@@ -4,8 +4,6 @@ info:
   title: Todo API
   license:
     name: MIT
-servers:
-  - url: http://localhost:3000/
 security:
   - BearerAuth: []
 components:

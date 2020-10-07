@@ -7,7 +7,14 @@ const initSwagger = () => {
     const swaggerSpec = swaggerJSDoc({
       swaggerDefinition: {
         openapi: '3.0.0',
-        servers: [{ url: 'http://localhost:3000/' }],
+        servers: [
+          {
+            url:
+              process.env.NODE_ENV === 'production'
+                ? process.env.PRODUCTION_URL
+                : `http://localhost:${process.env.PORT}`
+          }
+        ],
         security: [{ BearerAuth: [] }],
         info: {
           title: 'Kahoot api docs',
