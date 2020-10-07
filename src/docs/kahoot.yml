@@ -1,0 +1,214 @@
+paths:
+  /kahoots:
+    get:
+      summary: Get kahoots are created by user
+      tags:
+        - kahoot
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/kahootSchemas/SuccessRespone'
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/kahootSchemas/FailedRespone'
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/kahootSchemas/SeverErrorRespone'
+    post:
+      summary: Create kahoot
+      tags:
+        - kahoot
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/kahootSchemas/CreateRequestBody'
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/kahootSchemas/SuccessRespone'
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/kahootSchemas/FailedRespone'
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/kahootSchemas/SeverErrorRespone'
+  /kahoots/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      summary: Get kahoot by id
+      tags:
+        - kahoot
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/kahootSchemas/SuccessRespone'
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/kahootSchemas/FailedRespone'
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/kahootSchemas/SeverErrorRespone'
+    put:
+      summary: Update kahoot
+      tags:
+        - kahoot
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/kahootSchemas/UpdateRequestBody'
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/kahootSchemas/SuccessRespone'
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/kahootSchemas/FailedRespone'
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/kahootSchemas/SeverErrorRespone'
+    delete:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      summary: Delete kahoot
+      tags:
+        - kahoot
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/kahootSchemas/SuccessRespone'
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/kahootSchemas/FailedRespone'
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/kahootSchemas/SeverErrorRespone'
+components:
+  kahootSchemas:
+    SuccessRespone:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/kahootSchemas/Kahoot'
+    FailedRespone:
+      type: object
+      properties:
+        message:
+          type: string
+    SeverErrorRespone:
+      type: object
+      properties:
+        message:
+          type: string
+        error:
+          type: object
+    Kahoot:
+      type: object
+      properties:
+        userId:
+          type: string
+        title:
+          type: string
+        questions:
+          type: array
+          items:
+            $ref: '#/components/kahootSchemas/Question'
+    Question:
+      type: object
+      properties:
+        content:
+          type: string
+        image:
+          type: string
+        timeLimit:
+          type: number
+        points:
+          type: number
+        isSingleSelect:
+          type: boolean
+        answers:
+          type: array
+          items:
+            type: object
+            properties:
+              A:
+                type: string
+              B:
+                type: string
+              C:
+                type: string
+              D:
+                type: string
+        correctAnswer:
+          type: string
+    CreateRequestBody:
+      type: object
+      properties:
+        userId:
+          type: string
+        title:
+          type: string
+    UpdateRequestBody:
+      type: object
+      properties:
+        _id:
+          type: string
+        userId:
+          type: string
+        title:
+          type: string
+        questions:
+          type: array
+          example: []
+        __v:
+          type: string

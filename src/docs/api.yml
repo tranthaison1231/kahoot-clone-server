@@ -1,0 +1,16 @@
+openapi: '3.0.0'
+info:
+  version: 2.0.0
+  title: Todo API
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:3000/
+security:
+  - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: apiKey
+      in: header
+      name: x-access-token

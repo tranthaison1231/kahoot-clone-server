@@ -1,0 +1,74 @@
+paths:
+  /auth/login:
+    post:
+      summary: Login
+      tags:
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/authSchemas/LoginRequestBody'
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/authSchemas/SuccessResponse'
+        401:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/authSchemas/FailedResponse'
+  /auth/register:
+    post:
+      summary: Register
+      tags:
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/authSchemas/RegisterRequestBody'
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/authSchemas/SuccessResponse'
+        401:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/authSchemas/FailedResponse'
+
+components:
+  authSchemas:
+    LoginRequestBody:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    FailedResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    SuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        accessToken:
+          type: string
+    RegisterRequestBody:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        confirmPassword:
+          type: string
