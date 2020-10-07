@@ -1,11 +1,13 @@
-import * as express from 'express';
-import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import status from 'http-status';
-import { Login, Register } from './auth.interface';
 import UserModel from './user.model';
-import { Response, Controller } from '@shyn123/express-rest';
 import { EXPIRED_TIME } from '@/constant';
+import { Login, Register } from './auth.interface';
+import express, { Request, Response } from 'express';
+import validate from '@/middlewares/validate.middleware';
+import { loginSchema, registerSchema } from './auth.validate';
+import { Response as HttpResponse, Controller } from '@shyn123/express-rest';
 
 class AuthController implements Controller {
   public path = '/auth';
@@ -18,18 +20,22 @@ class AuthController implements Controller {
   }
 
   public initializeRoutes = () => {
-    this.router.post(`${this.path}/login`, this.login);
-    this.router.post(`${this.path}/register`, this.register);
+    this.router.post(`${this.path}/login`, validate(loginSchema), this.login);
+    this.router.post(
+      `${this.path}/register`,
+      validate(registerSchema),
+      this.register
+    );
   };
 
-  private login = async (req: express.Request, res: express.Response) => {
+  private login = async (req: Request, res: Response) => {
     const { username, password }: Login = req.body;
     const user = await this.user.findOne({ username });
     if (!user) {
-      return Response(
+      return HttpResponse(
         res,
         { message: 'User name does not exist' },
-        status.UNAUTHORIZED
+        status.BAD_REQUEST
       );
     }
     const isPasswordCorrect = await bcrypt.compare(
@@ -37,7 +43,11 @@ class AuthController implements Controller {
       user.password
     );
     if (!isPasswordCorrect) {
-      return Response(res, { message: 'Wrong password' }, status.UNAUTHORIZED);
+      return HttpResponse(
+        res,
+        { message: 'Wrong password' },
+        status.BAD_REQUEST
+      );
     }
     const payload = {
       username,
@@ -45,29 +55,29 @@ class AuthController implements Controller {
       exp: Date.now() + EXPIRED_TIME
     };
     const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
-    return Response(
+    return HttpResponse(
       res,
       { message: 'Login completed', accessToken },
-      status.OK
+      status.CREATED
     );
   };
 
-  private register = async (req: express.Request, res: express.Response) => {
+  private register = async (req: Request, res: Response) => {
     const { username, password, confirmPassword }: Register = req.body;
 
     const user = await this.user.findOne({ username });
     if (user) {
-      return Response(
+      return HttpResponse(
         res,
         { message: 'Username has been used' },
-        status.UNAUTHORIZED
+        status.BAD_REQUEST
       );
     }
     if (password !== confirmPassword) {
-      return Response(
+      return HttpResponse(
         res,
         { message: 'Password not matched' },
-        status.UNAUTHORIZED
+        status.BAD_REQUEST
       );
     }
     const hashPassword = await bcrypt.hash(password, this.salt);
@@ -82,7 +92,7 @@ class AuthController implements Controller {
       exp: Date.now() + EXPIRED_TIME
     };
     const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
-    return Response(
+    return HttpResponse(
       res,
       { message: 'Register completed', accessToken },
       status.CREATED

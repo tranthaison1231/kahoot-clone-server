@@ -32,7 +32,7 @@ class RoomController implements Controller {
         status.CREATED
       );
     } catch (error) {
-      return HttpResponse(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+      return HttpResponse(res, { error }, status.INTERNAL_SERVER_ERROR);
     }
   };
   private getByPin = async (req: Request, res: Response) => {
@@ -74,7 +74,7 @@ class RoomController implements Controller {
         return HttpResponse(
           res,
           { message: `This room is ${room.status}` },
-          status.FORBIDDEN
+          status.UNAUTHORIZED
         );
       }
       const newPlayer = new this.player({ username });
@@ -153,7 +153,7 @@ class RoomController implements Controller {
       socket.emit('server-room-getbyid', data);
       return HttpResponse(res, { data });
     } catch (error) {
-      return HttpResponse(res, { error: error }, status.INTERNAL_SERVER_ERROR);
+      return HttpResponse(res, { error }, status.INTERNAL_SERVER_ERROR);
     }
   };
 }
