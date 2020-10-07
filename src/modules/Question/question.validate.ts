@@ -2,7 +2,7 @@ import Joi, { Schema } from 'joi';
 
 export const schema: Schema = Joi.object({
   content: Joi.string().allow(''),
-  image: Joi.string().allow(null),
+  image: Joi.string().allow(''),
   timeLimit: Joi.number().allow(''),
   points: Joi.number().allow(''),
   answers: Joi.object()
