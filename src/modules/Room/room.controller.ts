@@ -35,7 +35,7 @@ class RoomController implements Controller {
       await data.save();
       return createdException(res, data);
     } catch (error) {
-      serverErrorException(res, error);
+      return serverErrorException(res, error);
     }
   };
   private getByPin = async (req: Request, res: Response) => {
@@ -46,7 +46,7 @@ class RoomController implements Controller {
       if (!data) return notFoundException(res, pin.toString());
       return HttpResponse(res, { _id: data._id });
     } catch (error) {
-      serverErrorException(res, error);
+      return serverErrorException(res, error);
     }
   };
   private join = async (req: Request, res: Response) => {
@@ -79,7 +79,7 @@ class RoomController implements Controller {
       io.in(data.pin).emit('server-user-join', data);
       return joinRoomException(res, data);
     } catch (error) {
-      serverErrorException(res, error);
+      return serverErrorException(res, error);
     }
   };
   private changeStatus = async (req: Request, res: Response) => {
@@ -105,7 +105,7 @@ class RoomController implements Controller {
       io.in(data.pin).emit(`server-room-${roomStatus}`, data);
       return changeStatusException(res, data, roomStatus);
     } catch (error) {
-      serverErrorException(res, error);
+      return serverErrorException(res, error);
     }
   };
   getById = async (req: Request, res: Response) => {
@@ -124,7 +124,7 @@ class RoomController implements Controller {
       socket.emit('server-room-getbyid', data);
       return HttpResponse(res, { data });
     } catch (error) {
-      serverErrorException(res, error);
+      return serverErrorException(res, error);
     }
   };
 }
