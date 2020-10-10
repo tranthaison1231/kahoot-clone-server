@@ -38,7 +38,7 @@ export const uploadImageException = (
   res: Response,
   image: UploadApiResponse
 ) => {
-  return HttpResponse(res, { message: 'Upload completed', url: image.url });
+  return HttpResponse(res, { message: 'Upload completed', url: image.secure_url });
 };
 
 export const joinRoomException = (res: Response, data: any) => {
