@@ -1,7 +1,7 @@
 import status from 'http-status';
 import { Response } from 'express';
 import { Response as HttpResponse } from '@shyn123/express-rest';
-
+import { UploadApiResponse } from 'cloudinary';
 export const notFoundException = (res: Response, input: string) => {
   return HttpResponse(
     res,
@@ -29,5 +29,15 @@ export const serverErrorException = (res: Response, error: any) => {
     res,
     { error: error.message },
     status.INTERNAL_SERVER_ERROR
+  );
+};
+export const uploadImageException = (
+  res: Response,
+  image: UploadApiResponse
+) => {
+  return HttpResponse(
+    res,
+    { message: 'Upload completed', url: image.url },
+    status.OK
   );
 };
