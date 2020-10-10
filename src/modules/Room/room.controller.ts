@@ -1,5 +1,12 @@
+import {
+  createdException,
+  joinRoomException,
+  notFoundException,
+  roomStatusException,
+  serverErrorException,
+  changeStatusException
+} from '@/utils/exception';
 import express from 'express';
-import status from 'http-status';
 import RoomModel from './room.model';
 import { Request, Response } from 'express';
 import PlayerModel from '@/modules/Player/player.model';
@@ -26,34 +33,20 @@ class RoomController implements Controller {
     try {
       const data = new this.model(req.body);
       await data.save();
-      return HttpResponse(
-        res,
-        { message: 'Create completed', data },
-        status.CREATED
-      );
+      return createdException(res, data);
     } catch (error) {
-      return HttpResponse(res, { error }, status.INTERNAL_SERVER_ERROR);
+      serverErrorException(res, error);
     }
   };
   private getByPin = async (req: Request, res: Response) => {
     try {
       const { pin } = req.query;
-      if (!pin)
-        return HttpResponse(
-          res,
-          { message: `Pin not found` },
-          status.NOT_FOUND
-        );
+      if (!pin) return notFoundException(res, 'Pin');
       const data = await this.model.findOne({ pin: Number(pin) }).lean();
-      if (!data)
-        return HttpResponse(
-          res,
-          { message: `${pin} not found` },
-          status.NOT_FOUND
-        );
+      if (!data) return notFoundException(res, pin.toString());
       return HttpResponse(res, { _id: data._id });
     } catch (error) {
-      return HttpResponse(res, { error }, status.INTERNAL_SERVER_ERROR);
+      serverErrorException(res, error);
     }
   };
   private join = async (req: Request, res: Response) => {
@@ -64,18 +57,10 @@ class RoomController implements Controller {
       const io = req.app.get('io');
       const room = await this.model.findById(id).lean();
       if (!room) {
-        return HttpResponse(
-          res,
-          { message: `${id} not found` },
-          status.NOT_FOUND
-        );
+        return notFoundException(res, id);
       }
       if (room.status !== 'PENDING') {
-        return HttpResponse(
-          res,
-          { message: `This room is ${room.status}` },
-          status.UNAUTHORIZED
-        );
+        return roomStatusException(res, room);
       }
       const newPlayer = new this.player({ username });
       newPlayer.save();
@@ -92,9 +77,9 @@ class RoomController implements Controller {
 
       socket.join(data.pin);
       io.in(data.pin).emit('server-user-join', data);
-      return HttpResponse(res, { message: 'Join completed', data });
+      return joinRoomException(res, data);
     } catch (error) {
-      return HttpResponse(res, { error }, status.INTERNAL_SERVER_ERROR);
+      serverErrorException(res, error);
     }
   };
   private changeStatus = async (req: Request, res: Response) => {
@@ -102,11 +87,7 @@ class RoomController implements Controller {
       const { roomStatus, id } = req.params;
       const io = req.app.get('io');
       if (!['playing', 'finish'].includes(roomStatus)) {
-        return HttpResponse(
-          res,
-          { message: `${roomStatus} not found` },
-          status.NOT_FOUND
-        );
+        return notFoundException(res, roomStatus);
       }
       const data = await this.model
         .findByIdAndUpdate(
@@ -119,16 +100,12 @@ class RoomController implements Controller {
         .populate('currentQuestion')
         .lean();
       if (!data) {
-        return HttpResponse(
-          res,
-          { message: `${id} not found` },
-          status.NOT_FOUND
-        );
+        return notFoundException(res, id);
       }
       io.in(data.pin).emit(`server-room-${roomStatus}`, data);
-      return HttpResponse(res, { message: `Room is ${roomStatus}`, data });
+      return changeStatusException(res, data, roomStatus);
     } catch (error) {
-      return HttpResponse(res, { error }, status.INTERNAL_SERVER_ERROR);
+      serverErrorException(res, error);
     }
   };
   getById = async (req: Request, res: Response) => {
@@ -142,18 +119,12 @@ class RoomController implements Controller {
         .populate('currentQuestion')
         .lean();
       if (!data) {
-        return HttpResponse(
-          res,
-          {
-            message: `${id} not found`
-          },
-          status.NOT_FOUND
-        );
+        return notFoundException(res, id);
       }
       socket.emit('server-room-getbyid', data);
       return HttpResponse(res, { data });
     } catch (error) {
-      return HttpResponse(res, { error }, status.INTERNAL_SERVER_ERROR);
+      serverErrorException(res, error);
     }
   };
 }
