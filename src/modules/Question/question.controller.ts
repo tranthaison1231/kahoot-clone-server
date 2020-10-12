@@ -32,7 +32,6 @@ class QuestionController extends CrudController implements Controller {
       this.update
     );
     this.router.get(`${this.path}/:id`, requireAuth, this.getById);
-    this.router.post('/image', requireAuth, multerUploads, this.upload);
     this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
     this.router.post(this.path, requireAuth, validate(schema), this.create);
   };
@@ -51,18 +50,6 @@ class QuestionController extends CrudController implements Controller {
         .populate('questions')
         .lean();
       return CreatedException(res, data);
-    } catch (error) {
-      return ServerErrorException(res, error);
-    }
-  };
-  upload = async (req: Request, res: Response) => {
-    try {
-      if (!req.file || !isImage(req.file)) {
-        return NotFoundException(res, 'Image');
-      }
-      const file = dataUri(req).content;
-      const image = await uploadImage(file);
-      return UploadImageException(res, image);
     } catch (error) {
       return ServerErrorException(res, error);
     }
