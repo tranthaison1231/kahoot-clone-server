@@ -4,10 +4,10 @@ import {
   Response as HttpResponse
 } from '@shyn123/express-rest';
 import {
-  editedException,
-  createdException,
-  notFoundException,
-  serverErrorException
+  EditedException,
+  CreatedException,
+  NotFoundException,
+  ServerErrorException
 } from '@/utils/exception';
 import { Response } from 'express';
 import KahootModel from './kahoot.model';
@@ -51,7 +51,7 @@ class KahootController extends CrudController implements Controller {
         .lean();
       return HttpResponse(res, { data });
     } catch (error) {
-      return serverErrorException(res, error);
+      return ServerErrorException(res, error);
     }
   };
   getById = async (req: RequestWithUser, res: Response) => {
@@ -63,11 +63,11 @@ class KahootController extends CrudController implements Controller {
         .populate('questions')
         .lean();
       if (!data) {
-        return notFoundException(res, id);
+        return NotFoundException(res, id);
       }
       return HttpResponse(res, { data });
     } catch (error) {
-      return serverErrorException(res, error);
+      return ServerErrorException(res, error);
     }
   };
   create = async (req: RequestWithUser, res: Response) => {
@@ -75,9 +75,9 @@ class KahootController extends CrudController implements Controller {
       const { _id } = req.user;
       const data = new this.model({ ...req.body, userId: _id });
       await data.save();
-      return createdException(res, data);
+      return CreatedException(res, data);
     } catch (error) {
-      return serverErrorException(res, error);
+      return ServerErrorException(res, error);
     }
   };
   update = async (req: RequestWithUser, res: Response) => {
@@ -95,11 +95,11 @@ class KahootController extends CrudController implements Controller {
         .populate('questions')
         .lean();
       if (!data) {
-        return notFoundException(res, id);
+        return NotFoundException(res, id);
       }
-      return editedException(res, data);
+      return EditedException(res, data);
     } catch (error) {
-      return serverErrorException(res, error);
+      return ServerErrorException(res, error);
     }
   };
 }

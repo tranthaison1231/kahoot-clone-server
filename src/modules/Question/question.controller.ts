@@ -1,8 +1,8 @@
 import {
-  createdException,
-  notFoundException,
-  uploadImageException,
-  serverErrorException
+  CreatedException,
+  NotFoundException,
+  UploadImageException,
+  ServerErrorException
 } from '@/utils/exception';
 import { isImage } from '@/utils';
 import { Request, Response } from 'express';
@@ -50,21 +50,21 @@ class QuestionController extends CrudController implements Controller {
         )
         .populate('questions')
         .lean();
-      return createdException(res, data);
+      return CreatedException(res, data);
     } catch (error) {
-      return serverErrorException(res, error);
+      return ServerErrorException(res, error);
     }
   };
   upload = async (req: Request, res: Response) => {
     try {
       if (!req.file || !isImage(req.file)) {
-        return notFoundException(res, 'Image');
+        return NotFoundException(res, 'Image');
       }
       const file = dataUri(req).content;
       const image = await uploadImage(file);
-      return uploadImageException(res, image);
+      return UploadImageException(res, image);
     } catch (error) {
-      return serverErrorException(res, error);
+      return ServerErrorException(res, error);
     }
   };
 }

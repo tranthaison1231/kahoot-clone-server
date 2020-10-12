@@ -4,7 +4,7 @@ import { UploadApiResponse } from 'cloudinary';
 import { Room } from '@/modules/Room/room.interface';
 import { Response as HttpResponse } from '@shyn123/express-rest';
 
-export const notFoundException = (res: Response, input: string) => {
+export const NotFoundException = (res: Response, input: string) => {
   return HttpResponse(
     res,
     {
@@ -14,7 +14,7 @@ export const notFoundException = (res: Response, input: string) => {
   );
 };
 
-export const createdException = (res: Response, data: any) => {
+export const CreatedException = (res: Response, data: any) => {
   return HttpResponse(
     res,
     { message: 'Create completed', data },
@@ -22,11 +22,11 @@ export const createdException = (res: Response, data: any) => {
   );
 };
 
-export const editedException = (res: Response, data: any) => {
+export const EditedException = (res: Response, data: any) => {
   return HttpResponse(res, { message: 'Edit completed', data });
 };
 
-export const serverErrorException = (res: Response, error: any) => {
+export const ServerErrorException = (res: Response, error: any) => {
   return HttpResponse(
     res,
     { error: error.message },
@@ -34,18 +34,18 @@ export const serverErrorException = (res: Response, error: any) => {
   );
 };
 
-export const uploadImageException = (
+export const UploadImageException = (
   res: Response,
   image: UploadApiResponse
 ) => {
   return HttpResponse(res, { message: 'Upload completed', url: image.secure_url });
 };
 
-export const joinRoomException = (res: Response, data: any) => {
+export const JoinRoomException = (res: Response, data: any) => {
   return HttpResponse(res, { message: 'Join completed', data });
 };
 
-export const roomStatusException = (res: Response, room: Room) => {
+export const RoomStatusException = (res: Response, room: Room) => {
   return HttpResponse(
     res,
     { message: `This room is ${room.status}` },
@@ -53,7 +53,7 @@ export const roomStatusException = (res: Response, room: Room) => {
   );
 };
 
-export const changeStatusException = (
+export const ChangeStatusException = (
   res: Response,
   data: any,
   status: string
