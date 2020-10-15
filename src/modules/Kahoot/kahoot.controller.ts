@@ -14,6 +14,7 @@ import KahootModel from './kahoot.model';
 import validate from '@/middlewares/validate.middleware';
 import { createSchema, updateSchema } from './kahoot.validate';
 import requireAuth, { RequestWithUser } from '@/middlewares/auth.middleware';
+import { DEFAULT_PAGE, PERPAGE } from '@/constant';
 
 class KahootController extends CrudController implements Controller {
   public path = '/kahoots';
@@ -44,11 +45,23 @@ class KahootController extends CrudController implements Controller {
 
   getAll = async (req: RequestWithUser, res: Response) => {
     try {
+      const title = req.query.q || '';
+      const page = Number(req.query.page) || DEFAULT_PAGE;
+      const perPage = Number(req.query.limit) || PERPAGE;
+      const drop = (page - 1) * perPage;
       const { _id } = req.user;
       const data = await this.model
-        .find({ userId: _id })
+        .find({
+          userId: _id,
+          title: {
+            $regex: title.toString(),
+            $options: 'i'
+          }
+        })
         .populate('questions')
-        .lean();
+        .lean()
+        .skip(drop)
+        .limit(perPage);
       return HttpResponse(res, { data });
     } catch (error) {
       return ServerErrorException(res, error);
