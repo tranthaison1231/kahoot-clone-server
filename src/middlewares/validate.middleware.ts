@@ -1,7 +1,7 @@
 import { Schema } from 'joi';
 import status from 'http-status';
 import { NextFunction, Request, Response } from 'express';
-import { Response as HttpResponse, Exceptions } from '@shyn123/express-rest';
+import { Response as HttpResponse, Exception } from '@shyn123/express-rest';
 
 const validate = (schema: Schema) => async (
   req: Request,
@@ -18,7 +18,7 @@ const validate = (schema: Schema) => async (
     }
     next();
   } catch (error) {
-    return Exceptions.ServerError(res, error);
+    return Exception.ServerError(res, error);
   }
 };
 

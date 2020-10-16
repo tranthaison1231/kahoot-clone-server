@@ -5,7 +5,6 @@ import { RequestWithUser } from './auth.middleware';
 interface Pagination {
   limit: number;
   skip: number;
-  title: string;
 }
 export interface RequestWithPagination extends RequestWithUser {
   pagination: Pagination;
@@ -18,12 +17,10 @@ const pagination = (
 ) => {
   const { page = DEFAULT_PAGE, limit = PERPAGE } = req.query;
   const skip = (Number(page) - 1) * Number(limit);
-  const title = req.query.q || '';
 
   req.pagination = {
     limit: Number(limit),
-    skip,
-    title: title.toString()
+    skip
   };
   next();
 };

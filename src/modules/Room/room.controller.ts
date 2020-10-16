@@ -10,7 +10,7 @@ import PlayerModel from '@/modules/Player/player.model';
 import {
   Controller,
   Response as HttpResponse,
-  Exceptions
+  Exception
 } from '@shyn123/express-rest';
 
 class RoomController implements Controller {
@@ -34,20 +34,20 @@ class RoomController implements Controller {
     try {
       const data = new this.model(req.body);
       await data.save();
-      return Exceptions.Create(res, data);
+      return Exception.Create(res, data);
     } catch (error) {
-      return Exceptions.ServerError(res, error);
+      return Exception.ServerError(res, error);
     }
   };
   private getByPin = async (req: Request, res: Response) => {
     try {
       const { pin } = req.query;
-      if (!pin) return Exceptions.NotFound(res, 'Pin');
+      if (!pin) return Exception.NotFound(res, 'Pin');
       const data = await this.model.findOne({ pin: Number(pin) }).lean();
-      if (!data) return Exceptions.NotFound(res, pin.toString());
+      if (!data) return Exception.NotFound(res, pin.toString());
       return HttpResponse(res, { _id: data._id });
     } catch (error) {
-      return Exceptions.ServerError(res, error);
+      return Exception.ServerError(res, error);
     }
   };
   private join = async (req: Request, res: Response) => {
@@ -58,7 +58,7 @@ class RoomController implements Controller {
       const io = req.app.get('io');
       const room = await this.model.findById(id).lean();
       if (!room) {
-        return Exceptions.NotFound(res, id);
+        return Exception.NotFound(res, id);
       }
       if (room.status !== 'PENDING') {
         return RoomStatusException(res, room);
@@ -79,7 +79,7 @@ class RoomController implements Controller {
       io.in(data.pin).emit('server-user-join', data);
       return JoinRoomException(res, data);
     } catch (error) {
-      return Exceptions.ServerError(res, error);
+      return Exception.ServerError(res, error);
     }
   };
   private changeStatus = async (req: Request, res: Response) => {
@@ -87,7 +87,7 @@ class RoomController implements Controller {
       const { roomStatus, id } = req.params;
       const io = req.app.get('io');
       if (!['playing', 'finish'].includes(roomStatus)) {
-        return Exceptions.NotFound(res, roomStatus);
+        return Exception.NotFound(res, roomStatus);
       }
       const data = await this.model
         .findByIdAndUpdate(
@@ -100,12 +100,12 @@ class RoomController implements Controller {
         .populate('currentQuestion')
         .lean();
       if (!data) {
-        return Exceptions.NotFound(res, id);
+        return Exception.NotFound(res, id);
       }
       io.in(data.pin).emit(`server-room-${roomStatus}`, data);
       return ChangeStatusException(res, data, roomStatus);
     } catch (error) {
-      return Exceptions.ServerError(res, error);
+      return Exception.ServerError(res, error);
     }
   };
   getById = async (req: Request, res: Response) => {
@@ -119,12 +119,12 @@ class RoomController implements Controller {
         .populate('currentQuestion')
         .lean();
       if (!data) {
-        return Exceptions.NotFound(res, id);
+        return Exception.NotFound(res, id);
       }
       socket.emit('server-room-getbyid', data);
       return HttpResponse(res, { data });
     } catch (error) {
-      return Exceptions.ServerError(res, error);
+      return Exception.ServerError(res, error);
     }
   };
 }

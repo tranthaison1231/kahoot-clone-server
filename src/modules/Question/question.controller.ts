@@ -4,7 +4,7 @@ import { schema } from './question.validate';
 import requireAuth from '@/middlewares/auth.middleware';
 import KahootModel from '@/modules/Kahoot/kahoot.model';
 import validate from '@/middlewares/validate.middleware';
-import { Controller, CrudController, Exceptions } from '@shyn123/express-rest';
+import { Controller, CrudController, Exception } from '@shyn123/express-rest';
 
 class QuestionController extends CrudController implements Controller {
   public path = '/kahoots/:kahootId/questions';
@@ -40,9 +40,9 @@ class QuestionController extends CrudController implements Controller {
         )
         .populate('questions')
         .lean();
-      return Exceptions.Create(res, data);
+      return Exception.Create(res, data);
     } catch (error) {
-      return Exceptions.ServerError(res, error);
+      return Exception.ServerError(res, error);
     }
   };
 }

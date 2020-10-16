@@ -1,6 +1,6 @@
 import {
   Controller,
-  Exceptions,
+  Exception,
   CrudController,
   Response as HttpResponse
 } from '@shyn123/express-rest';
@@ -12,7 +12,6 @@ import pagination, {
 } from '@/middlewares/pagination.middleware';
 import { createSchema, updateSchema } from './kahoot.validate';
 import requireAuth, { RequestWithUser } from '@/middlewares/auth.middleware';
-import { DEFAULT_PAGE, PERPAGE } from '@/constant';
 
 class KahootController extends CrudController implements Controller {
   public path = '/kahoots';
@@ -43,13 +42,15 @@ class KahootController extends CrudController implements Controller {
 
   getAll = async (req: RequestWithPagination, res: Response) => {
     try {
-      const { skip, limit, title } = req.pagination;
+      const { skip, limit } = req.pagination;
+      const title = req.query.q || '';
+
       const { _id } = req.user;
       const data = await this.model
         .find({
           userId: _id,
           title: {
-            $regex: title,
+            $regex: title.toString(),
             $options: 'i'
           }
         })
@@ -59,7 +60,7 @@ class KahootController extends CrudController implements Controller {
         .limit(limit);
       return HttpResponse(res, { data });
     } catch (error) {
-      return Exceptions.ServerError(res, error);
+      return Exception.ServerError(res, error);
     }
   };
   getById = async (req: RequestWithUser, res: Response) => {
@@ -71,11 +72,11 @@ class KahootController extends CrudController implements Controller {
         .populate('questions')
         .lean();
       if (!data) {
-        return Exceptions.NotFound(res, id);
+        return Exception.NotFound(res, id);
       }
       return HttpResponse(res, { data });
     } catch (error) {
-      return Exceptions.ServerError(res, error);
+      return Exception.ServerError(res, error);
     }
   };
   create = async (req: RequestWithUser, res: Response) => {
@@ -83,9 +84,9 @@ class KahootController extends CrudController implements Controller {
       const { _id } = req.user;
       const data = new this.model({ ...req.body, userId: _id });
       await data.save();
-      return Exceptions.Create(res, data);
+      return Exception.Create(res, data);
     } catch (error) {
-      return Exceptions.NotFound(res, error);
+      return Exception.NotFound(res, error);
     }
   };
   update = async (req: RequestWithUser, res: Response) => {
@@ -103,11 +104,11 @@ class KahootController extends CrudController implements Controller {
         .populate('questions')
         .lean();
       if (!data) {
-        return Exceptions.NotFound(res, id);
+        return Exception.NotFound(res, id);
       }
-      return Exceptions.Edit(res, data);
+      return Exception.Edit(res, data);
     } catch (error) {
-      return Exceptions.ServerError(res, error);
+      return Exception.ServerError(res, error);
     }
   };
 }
