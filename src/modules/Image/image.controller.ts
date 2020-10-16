@@ -1,14 +1,10 @@
-import {
-  NotFoundException,
-  ServerErrorException,
-  UploadImageException
-} from '@/utils/exception';
 import express from 'express';
 import { isImage } from '@/utils';
 import { Request, Response } from 'express';
 import { uploadImage } from '@/utils/uploadImage';
-import { Controller } from '@shyn123/express-rest';
 import requireAuth from '@/middlewares/auth.middleware';
+import { UploadImageException } from '@/utils/exception';
+import { Controller, Exceptions } from '@shyn123/express-rest';
 import { dataUri, multerUploads } from '@/middlewares/upload.middleware';
 
 class ImageController implements Controller {
@@ -26,13 +22,13 @@ class ImageController implements Controller {
   upload = async (req: Request, res: Response) => {
     try {
       if (!req.file || !isImage(req.file)) {
-        return NotFoundException(res, 'Image');
+        return Exceptions.NotFound(res, 'Image');
       }
       const file = dataUri(req).content;
       const image = await uploadImage(file);
       return UploadImageException(res, image);
     } catch (error) {
-      return ServerErrorException(res, error);
+      return Exceptions.ServerError(res, error);
     }
   };
 }

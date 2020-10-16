@@ -1,14 +1,9 @@
 import {
   Controller,
+  Exceptions,
   CrudController,
   Response as HttpResponse
 } from '@shyn123/express-rest';
-import {
-  EditedException,
-  CreatedException,
-  NotFoundException,
-  ServerErrorException
-} from '@/utils/exception';
 import { Response } from 'express';
 import KahootModel from './kahoot.model';
 import validate from '@/middlewares/validate.middleware';
@@ -64,7 +59,7 @@ class KahootController extends CrudController implements Controller {
         .limit(perPage);
       return HttpResponse(res, { data });
     } catch (error) {
-      return ServerErrorException(res, error);
+      return Exceptions.ServerError(res, error);
     }
   };
   getById = async (req: RequestWithUser, res: Response) => {
@@ -76,11 +71,11 @@ class KahootController extends CrudController implements Controller {
         .populate('questions')
         .lean();
       if (!data) {
-        return NotFoundException(res, id);
+        return Exceptions.NotFound(res, id);
       }
       return HttpResponse(res, { data });
     } catch (error) {
-      return ServerErrorException(res, error);
+      return Exceptions.ServerError(res, error);
     }
   };
   create = async (req: RequestWithUser, res: Response) => {
@@ -88,9 +83,9 @@ class KahootController extends CrudController implements Controller {
       const { _id } = req.user;
       const data = new this.model({ ...req.body, userId: _id });
       await data.save();
-      return CreatedException(res, data);
+      return Exceptions.Create(res, data);
     } catch (error) {
-      return ServerErrorException(res, error);
+      return Exceptions.NotFound(res, error);
     }
   };
   update = async (req: RequestWithUser, res: Response) => {
@@ -108,11 +103,11 @@ class KahootController extends CrudController implements Controller {
         .populate('questions')
         .lean();
       if (!data) {
-        return NotFoundException(res, id);
+        return Exceptions.NotFound(res, id);
       }
-      return EditedException(res, data);
+      return Exceptions.Edit(res, data);
     } catch (error) {
-      return ServerErrorException(res, error);
+      return Exceptions.ServerError(res, error);
     }
   };
 }

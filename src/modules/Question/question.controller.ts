@@ -1,19 +1,10 @@
-import {
-  CreatedException,
-  NotFoundException,
-  UploadImageException,
-  ServerErrorException
-} from '@/utils/exception';
-import { isImage } from '@/utils';
 import { Request, Response } from 'express';
 import QuestionModel from './question.model';
 import { schema } from './question.validate';
-import { uploadImage } from '@/utils/uploadImage';
 import requireAuth from '@/middlewares/auth.middleware';
 import KahootModel from '@/modules/Kahoot/kahoot.model';
 import validate from '@/middlewares/validate.middleware';
-import { Controller, CrudController } from '@shyn123/express-rest';
-import { multerUploads, dataUri } from '@/middlewares/upload.middleware';
+import { Controller, CrudController, Exceptions } from '@shyn123/express-rest';
 
 class QuestionController extends CrudController implements Controller {
   public path = '/kahoots/:kahootId/questions';
@@ -49,9 +40,9 @@ class QuestionController extends CrudController implements Controller {
         )
         .populate('questions')
         .lean();
-      return CreatedException(res, data);
+      return Exceptions.Create(res, data);
     } catch (error) {
-      return ServerErrorException(res, error);
+      return Exceptions.ServerError(res, error);
     }
   };
 }
