@@ -5,6 +5,6 @@ cloudinary.v2.config({
   api_key: process.env.CLOUD_KEY,
   api_secret: process.env.CLOUD_SECRET
 });
-export const upload = (file: string) => {
+export const uploadImage = (file: string) => {
   return cloudinary.v2.uploader.upload(file);
 };

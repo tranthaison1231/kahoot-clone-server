@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import { Express, MongoDB } from '@shyn123/express-rest';
 import AuthController from '@/modules/Auth/auth.controller';
 import RoomController from '@/modules/Room/room.controller';
+import ImageController from '@/modules/Image/image.controller';
 import KahootController from '@/modules/Kahoot/kahoot.controller';
 import QuestionController from '@/modules/Question/question.controller';
 import Swagger from '@/docs/config';
@@ -22,6 +23,7 @@ const app = new Express({
   controllers: [
     new AuthController(),
     new RoomController(),
+    new ImageController(),
     new KahootController(),
     new QuestionController(),
     new Swagger()

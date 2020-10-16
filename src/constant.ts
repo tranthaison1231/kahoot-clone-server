@@ -9,3 +9,5 @@ export const IMAGE_TYPE: string[] = [
   'jpg',
   'JPG'
 ];
+export const DEFAULT_PAGE = 1;
+export const PERPAGE = 5;

@@ -20,11 +20,9 @@ const kahootSchema = new mongoose.Schema({
 function toObjectId(userId: string) {
   return mongoose.Types.ObjectId(userId);
 }
-
 const kahootModel = mongoose.model<Kahoot & mongoose.Document>(
   'Kahoot',
   kahootSchema,
   'kahoots'
 );
-
 export default kahootModel;
