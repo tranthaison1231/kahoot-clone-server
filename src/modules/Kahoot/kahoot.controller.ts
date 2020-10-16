@@ -7,6 +7,9 @@ import {
 import { Response } from 'express';
 import KahootModel from './kahoot.model';
 import validate from '@/middlewares/validate.middleware';
+import pagination, {
+  RequestWithPagination
+} from '@/middlewares/pagination.middleware';
 import { createSchema, updateSchema } from './kahoot.validate';
 import requireAuth, { RequestWithUser } from '@/middlewares/auth.middleware';
 import { DEFAULT_PAGE, PERPAGE } from '@/constant';
@@ -33,30 +36,27 @@ class KahootController extends CrudController implements Controller {
       validate(updateSchema),
       this.update
     );
-    this.router.get(this.path, requireAuth, this.getAll);
+    this.router.get(this.path, requireAuth, pagination, this.getAll);
     this.router.get(`${this.path}/:id`, requireAuth, this.getById);
     this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
   };
 
-  getAll = async (req: RequestWithUser, res: Response) => {
+  getAll = async (req: RequestWithPagination, res: Response) => {
     try {
-      const title = req.query.q || '';
-      const page = Number(req.query.page) || DEFAULT_PAGE;
-      const perPage = Number(req.query.limit) || PERPAGE;
-      const drop = (page - 1) * perPage;
+      const { skip, limit, title } = req.pagination;
       const { _id } = req.user;
       const data = await this.model
         .find({
           userId: _id,
           title: {
-            $regex: title.toString(),
+            $regex: title,
             $options: 'i'
           }
         })
         .populate('questions')
         .lean()
-        .skip(drop)
-        .limit(perPage);
+        .skip(skip)
+        .limit(limit);
       return HttpResponse(res, { data });
     } catch (error) {
       return Exceptions.ServerError(res, error);
