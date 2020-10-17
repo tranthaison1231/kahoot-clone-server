@@ -1,3 +1,4 @@
+import { Controller, Response as HttpResponse } from '@shyn123/express-rest';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import status from 'http-status';
@@ -7,7 +8,6 @@ import { Login, Register } from './auth.interface';
 import express, { Request, Response } from 'express';
 import validate from '@/middlewares/validate.middleware';
 import { loginSchema, registerSchema } from './auth.validate';
-import { Response as HttpResponse, Controller } from '@shyn123/express-rest';
 
 class AuthController implements Controller {
   public path = '/auth';

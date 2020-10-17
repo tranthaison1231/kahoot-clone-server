@@ -1,12 +1,15 @@
 import {
   Controller,
+  Exception,
   CrudController,
   Response as HttpResponse
 } from '@shyn123/express-rest';
 import { Response } from 'express';
-import status from 'http-status';
 import KahootModel from './kahoot.model';
 import validate from '@/middlewares/validate.middleware';
+import pagination, {
+  RequestWithPagination
+} from '@/middlewares/pagination.middleware';
 import { createSchema, updateSchema } from './kahoot.validate';
 import requireAuth, { RequestWithUser } from '@/middlewares/auth.middleware';
 
@@ -26,30 +29,38 @@ class KahootController extends CrudController implements Controller {
       validate(createSchema),
       this.create
     );
-    this.router.get(this.path, requireAuth, this.getAll);
     this.router.put(
       `${this.path}/:id`,
       requireAuth,
       validate(updateSchema),
       this.update
     );
+    this.router.get(this.path, requireAuth, pagination, this.getAll);
     this.router.get(`${this.path}/:id`, requireAuth, this.getById);
     this.router.delete(`${this.path}/:id`, requireAuth, this.deleteById);
   };
-  getAll = async (req: RequestWithUser, res: Response) => {
+
+  getAll = async (req: RequestWithPagination, res: Response) => {
     try {
+      const { skip, limit } = req.pagination;
+      const title = req.query.q || '';
+
       const { _id } = req.user;
       const data = await this.model
-        .find({ userId: _id })
+        .find({
+          userId: _id,
+          title: {
+            $regex: title.toString(),
+            $options: 'i'
+          }
+        })
         .populate('questions')
-        .lean();
+        .lean()
+        .skip(skip)
+        .limit(limit);
       return HttpResponse(res, { data });
     } catch (error) {
-      return HttpResponse(
-        res,
-        { error: error.message },
-        status.INTERNAL_SERVER_ERROR
-      );
+      return Exception.ServerError(res, error);
     }
   };
   getById = async (req: RequestWithUser, res: Response) => {
@@ -61,21 +72,11 @@ class KahootController extends CrudController implements Controller {
         .populate('questions')
         .lean();
       if (!data) {
-        return HttpResponse(
-          res,
-          {
-            message: `${id} not found`
-          },
-          status.NOT_FOUND
-        );
+        return Exception.NotFound(res, id);
       }
       return HttpResponse(res, { data });
     } catch (error) {
-      return HttpResponse(
-        res,
-        { error: error.message },
-        status.INTERNAL_SERVER_ERROR
-      );
+      return Exception.ServerError(res, error);
     }
   };
   create = async (req: RequestWithUser, res: Response) => {
@@ -83,17 +84,9 @@ class KahootController extends CrudController implements Controller {
       const { _id } = req.user;
       const data = new this.model({ ...req.body, userId: _id });
       await data.save();
-      return HttpResponse(
-        res,
-        { message: 'Create completed', data },
-        status.CREATED
-      );
+      return Exception.Create(res, data);
     } catch (error) {
-      return HttpResponse(
-        res,
-        { error: error.message },
-        status.INTERNAL_SERVER_ERROR
-      );
+      return Exception.NotFound(res, error);
     }
   };
   update = async (req: RequestWithUser, res: Response) => {
@@ -111,19 +104,11 @@ class KahootController extends CrudController implements Controller {
         .populate('questions')
         .lean();
       if (!data) {
-        return HttpResponse(
-          res,
-          { message: `${id} not found` },
-          status.NOT_FOUND
-        );
+        return Exception.NotFound(res, id);
       }
-      return HttpResponse(res, { message: 'Edit completed', data }, status.OK);
+      return Exception.Edit(res, data);
     } catch (error) {
-      return HttpResponse(
-        res,
-        { error: error.message },
-        status.INTERNAL_SERVER_ERROR
-      );
+      return Exception.ServerError(res, error);
     }
   };
 }
