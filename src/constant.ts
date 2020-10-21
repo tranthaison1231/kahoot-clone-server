@@ -10,4 +10,4 @@ export const IMAGE_TYPE: string[] = [
   'JPG'
 ];
 export const DEFAULT_PAGE = 1;
-export const PERPAGE = 5;
+export const PERPAGE = 10;

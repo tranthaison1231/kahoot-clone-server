@@ -42,23 +42,35 @@ class KahootController extends CrudController implements Controller {
 
   getAll = async (req: RequestWithPagination, res: Response) => {
     try {
-      const { skip, limit } = req.pagination;
+      const { skip, limit, page } = req.pagination;
       const title = req.query.q || '';
 
       const { _id } = req.user;
-      const data = await this.model
-        .find({
-          userId: _id,
-          title: {
-            $regex: title.toString(),
-            $options: 'i'
-          }
-        })
-        .populate('questions')
-        .lean()
-        .skip(skip)
-        .limit(limit);
-      return HttpResponse(res, { data });
+      const [data, total] = await Promise.all([
+        this.model
+          .find({
+            userId: _id,
+            title: {
+              $regex: title.toString(),
+              $options: 'i'
+            }
+          })
+          .populate('questions')
+          .lean()
+          .skip(skip)
+          .limit(limit),
+        this.model
+          .find({
+            userId: _id,
+            title: {
+              $regex: title.toString(),
+              $options: 'i'
+            }
+          })
+          .countDocuments()
+      ]);
+      const pageCount = Math.ceil(total / limit);
+      return HttpResponse(res, { data, limit, total, page, pageCount });
     } catch (error) {
       return Exception.ServerError(res, error);
     }
