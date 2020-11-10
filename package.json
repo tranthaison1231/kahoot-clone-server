@@ -5,7 +5,7 @@
   "main": "server.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc  & nodemon --exec ts-node ./dist/server.js",
+    "dev": "tsc & nodemon --exec ts-node ./dist/server.js",
     "start": "node ./dist/server.js",
     "start:prod": "NODE_ENV=production node ./dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
